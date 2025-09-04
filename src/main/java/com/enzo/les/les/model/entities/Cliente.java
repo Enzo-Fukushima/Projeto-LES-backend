@@ -1,4 +1,4 @@
-package com.enzo.les.les.model;
+package com.enzo.les.les.model.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

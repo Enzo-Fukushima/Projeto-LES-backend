@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.enzo.les.les.model.Cliente;
+import com.enzo.les.les.model.entities.Cliente;
 
 @Controller
 public class ClienteController {
