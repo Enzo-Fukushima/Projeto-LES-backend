@@ -47,6 +47,7 @@ public class Cliente {
     @Column(nullable = false, length = 9)
     private String numeroTelefone;
 
+
     private boolean ativo = true;
 
     private Integer ranking = 0;

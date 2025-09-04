@@ -15,5 +15,5 @@ public class BandeiraCartao {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String nome; // Ex: VISA, MasterCard, Elo
+    private String nome;
 }

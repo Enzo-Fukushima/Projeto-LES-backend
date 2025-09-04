@@ -1,8 +1,10 @@
 package com.enzo.les.les.model.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "enderecos")
 public class Endereco {
     @Id

@@ -1,15 +1,19 @@
 package com.enzo.les.les.model.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
 import com.enzo.les.les.model.entities.Cliente;
+import com.enzo.les.les.model.entities.Endereco;
+import com.enzo.les.les.model.entities.CartaoCredito;
+
+import lombok.Data;
 
 @Data
 public class ClienteDTO {
@@ -41,7 +45,7 @@ public class ClienteDTO {
     private String senha;
 
     @NotBlank(message = "Tipo de telefone não pode ser vazio")
-    private String tipoTelefone; // Ideal seria um ENUM
+    private String tipoTelefone; // Idealmente ENUM
 
     @NotBlank(message = "DDD não pode ser vazio")
     @Pattern(regexp = "\\d{2,3}", message = "DDD deve ter 2 ou 3 dígitos numéricos")
@@ -52,9 +56,13 @@ public class ClienteDTO {
     private String numeroTelefone;
 
     private boolean ativo = true;
-
     private Integer ranking = 0;
 
+    // 🔹 Relacionamentos
+    private List<Endereco> enderecos;
+    private List<CartaoCredito> cartoes;
+
+    // 🔹 Conversão para entidade Cliente
     public Cliente mapToEntity() {
         Cliente cliente = new Cliente();
         cliente.setId(this.id);
@@ -69,6 +77,19 @@ public class ClienteDTO {
         cliente.setNumeroTelefone(this.numeroTelefone);
         cliente.setAtivo(this.ativo);
         cliente.setRanking(this.ranking);
+
+        // associar endereços ao cliente
+        if (this.enderecos != null) {
+            this.enderecos.forEach(e -> e.setCliente(cliente));
+            cliente.setEnderecos(this.enderecos);
+        }
+
+        // associar cartões ao cliente
+        if (this.cartoes != null) {
+            this.cartoes.forEach(c -> c.setCliente(cliente));
+            cliente.setCartoes(this.cartoes);
+        }
+
         return cliente;
     }
 }
