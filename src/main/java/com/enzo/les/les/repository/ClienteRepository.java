@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
-    // Aqui podemos criar filtros customizados futuramente (ex: buscar por nome/email)
+    boolean existsByEmail(String email);
+    boolean existsByCpf(String cpf);
 }

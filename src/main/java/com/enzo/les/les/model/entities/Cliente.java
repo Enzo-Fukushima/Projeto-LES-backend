@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.enzo.les.les.model.dtos.ClienteDTO;
+
 @Entity
 @Table(name = "clientes")
 @Data
@@ -55,4 +57,21 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartaoCredito> cartoes;
+
+    public ClienteDTO mapToDTO() {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setId(this.getId());
+        dto.setNome(this.getNome());
+        dto.setCpf(this.getCpf());
+        dto.setGenero(this.getGenero());
+        dto.setDataNascimento(this.getDataNascimento());
+        dto.setEmail(this.getEmail());
+        dto.setSenha(this.getSenha());
+        dto.setTipoTelefone(this.getTipoTelefone());
+        dto.setDdd(this.getDdd());
+        dto.setNumeroTelefone(this.getNumeroTelefone());
+        dto.setAtivo(this.isAtivo());
+        dto.setRanking(this.getRanking());
+        return dto;
+    }
 }
