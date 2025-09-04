@@ -18,14 +18,14 @@ public class ClienteController {
     private final List<Cliente> clientes = new ArrayList<>();
 
     // Tela de cadastro
-    @GetMapping("/clientes/cadastro")
+    @GetMapping("/api/clientes/cadastro")
     public String cadastroForm(Model model) {
         model.addAttribute("cliente", new Cliente());
         return "cliente-cadastro";
     }
 
     // Salvar cliente (na lista mockada)
-    @PostMapping("/clientes/salvar")
+    @PostMapping("/api/clientes/salvar")
     public String salvar(@ModelAttribute Cliente cliente) {
         // Simula ID automático
         cliente.setId((long) (clientes.size() + 1));
@@ -35,14 +35,14 @@ public class ClienteController {
     }
 
     // Listar clientes
-    @GetMapping("/clientes/lista")
+    @GetMapping("/api/clientes/lista")
     public String listar(Model model) {
         model.addAttribute("clientes", clientes);
         return "cliente-lista";
     }
 
     // Editar cliente (simulação: apenas retorna o primeiro cliente encontrado)
-    @GetMapping("/clientes/editar/{id}")
+    @GetMapping("/api/clientes/editar/{id}")
     public String editar(Model model) {
         // Para protótipo, retorna o primeiro cliente da lista
         if (!clientes.isEmpty()) {
@@ -54,7 +54,7 @@ public class ClienteController {
     }
 
     // Inativar/Ativar cliente
-    @GetMapping("/clientes/inativar/{id}")
+    @GetMapping("/api/clientes/inativar/{id}")
     public String inativar(Long id) {
         // Para protótipo: inverte status do primeiro cliente da lista
         if (!clientes.isEmpty()) {
@@ -65,7 +65,7 @@ public class ClienteController {
     }
 
     // Excluir cliente
-    @GetMapping("/clientes/delete/{id}")
+    @GetMapping("/api/clientes/delete/{id}")
     public String delete(Long id) {
         // Para protótipo: remove o primeiro cliente da lista
         if (!clientes.isEmpty()) {
