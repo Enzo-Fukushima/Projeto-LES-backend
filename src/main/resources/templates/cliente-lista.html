@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Clientes</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Livraria Pacobello</a>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="cliente-cadastro.html">Cadastro</a></li>
+          <li class="nav-item"><a class="nav-link active" href="cliente-lista.html">Clientes</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Lista de Clientes -->
+  <div class="container mt-5">
+    <div class="card shadow-lg">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Clientes Cadastrados</h4>
+      </div>
+      <div class="card-body">
+        <!-- Filtro -->
+        <form class="mb-3">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Pesquisar cliente por nome, CPF ou email">
+            <button class="btn btn-outline-primary" type="button">Buscar</button>
+          </div>
+        </form>
+
+        <!-- Tabela de Clientes (mockada) -->
+        <table class="table table-hover table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefone</th>
+              <th>CPF</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Paulo Fonseca</td>
+              <td>paulo.f@email.com</td>
+              <td>(11) 98888-1234</td>
+              <td>123.456.789-00</td>
+              <td><span class="badge bg-success">Ativo</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Editar</button>
+                <button class="btn btn-sm btn-danger">Inativar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Thomas Carvalho</td>
+              <td>Thomas.C123@email.com</td>
+              <td>(21) 97777-5678</td>
+              <td>987.654.321-00</td>
+              <td><span class="badge bg-danger">Inativo</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Editar</button>
+                <button class="btn btn-sm btn-success">Ativar</button>
+              </td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Jacinto Machado</td>
+              <td>J.Machado@email.com</td>
+              <td>(11) 93333-0563</td>
+              <td>931.742.235-00</td>
+              <td><span class="badge bg-success">Ativo</span></td>
+              <td>
+                <button class="btn btn-sm btn-warning">Editar</button>
+                <button class="btn btn-sm btn-success">Ativar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Paginação (mock) -->
+        <nav>
+          <ul class="pagination justify-content-end">
+            <li class="page-item disabled"><a class="page-link">Anterior</a></li>
+            <li class="page-item active"><a class="page-link">1</a></li>
+            <li class="page-item"><a class="page-link">2</a></li>
+            <li class="page-item"><a class="page-link">Próximo</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
