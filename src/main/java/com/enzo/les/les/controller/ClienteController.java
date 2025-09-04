@@ -1,76 +1,81 @@
 package com.enzo.les.les.controller;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import com.enzo.les.les.model.dtos.ClienteDTO;
+import com.enzo.les.les.service.ClienteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.enzo.les.les.model.entities.Cliente;
 
-@Controller
+@RestController
+@RequestMapping("/api/clientes")
 public class ClienteController {
+    private final ClienteService clienteService;
 
-    // Lista mockada para testar a tela de listagem
-    private final List<Cliente> clientes = new ArrayList<>();
-
-    // Tela de cadastro
-    @GetMapping("/api/clientes/cadastro")
-    public String cadastroForm(Model model) {
-        model.addAttribute("cliente", new Cliente());
-        return "cliente-cadastro";
+    public ClienteController(ClienteService clienteService) {
+        this.clienteService = clienteService;
     }
 
-    // Salvar cliente (na lista mockada)
-    @PostMapping("/api/clientes/salvar")
-    public String salvar(@ModelAttribute Cliente cliente) {
-        // Simula ID automático
-        cliente.setId((long) (clientes.size() + 1));
-        cliente.setAtivo(true); // cliente sempre começa ativo
-        clientes.add(cliente);
-        return "redirect:/clientes/lista";
+    @Operation(summary = "Listar todas os clientes", description = "retorna uma lista com todas os clientes cadastrados na API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping
+    public List<ClienteDTO> getAllClientes(){
+        return clienteService.listarTodos();
     }
 
-    // Listar clientes
-    @GetMapping("/api/clientes/lista")
-    public String listar(Model model) {
-        model.addAttribute("clientes", clientes);
-        return "cliente-lista";
+    @Operation(summary = "Buscar Cliente por ID", description = "Retorna um cliente com o id selecionado")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteDTO> getPessoaById(@PathVariable Long id){
+        return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
-    // Editar cliente (simulação: apenas retorna o primeiro cliente encontrado)
-    @GetMapping("/api/clientes/editar/{id}")
-    public String editar(Model model) {
-        // Para protótipo, retorna o primeiro cliente da lista
-        if (!clientes.isEmpty()) {
-            model.addAttribute("cliente", clientes.get(0));
-        } else {
-            model.addAttribute("cliente", new Cliente());
-        }
-        return "cliente-cadastro";
+    @Operation(summary = "Criar um cliente no sistema", description = "Cria um cliente no sistema, através das informações enviadas")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente criado com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor"),
+            @ApiResponse(responseCode = "400", description = "Falha ao criar cadstro do cliente")
+    })
+    @PostMapping
+    public ResponseEntity<ClienteDTO> createPessoa(@Valid @RequestBody ClienteDTO dto){
+        return ResponseEntity.ok(clienteService.salvar(dto));
     }
 
-    // Inativar/Ativar cliente
-    @GetMapping("/api/clientes/inativar/{id}")
-    public String inativar(Long id) {
-        // Para protótipo: inverte status do primeiro cliente da lista
-        if (!clientes.isEmpty()) {
-            Cliente c = clientes.get(0);
-            c.setAtivo(!c.isAtivo());
-        }
-        return "redirect:/clientes/lista";
+    @Operation(summary = "Atualiza os dados de um cliente", description = "Edita as informações de um cliente existente, baseando-se no seu id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Informações atualizadas com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteDTO> updatePessoa(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto){
+        ClienteDTO existing = clienteService.atualizar(id, dto);
+        return ResponseEntity.ok(existing);
     }
 
-    // Excluir cliente
-    @GetMapping("/api/clientes/delete/{id}")
-    public String delete(Long id) {
-        // Para protótipo: remove o primeiro cliente da lista
-        if (!clientes.isEmpty()) {
-            clientes.remove(0);
-        }
-        return "redirect:/clientes/lista";
+    @Operation(summary = "Excluir uma pessoa do sistema", description = "Deleta uma pessoa do sistema, baseando-se no seu id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Pessoa deletada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Pessoa não encontrada"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePessoa(@PathVariable Long id){
+        clienteService.inativar(id);
+        return ResponseEntity.noContent().build();
     }
 }
