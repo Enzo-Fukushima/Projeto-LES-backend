@@ -1,13 +1,18 @@
 package com.enzo.les.les.controller;
 
-
 import java.util.List;
 
 import com.enzo.les.les.model.dtos.ClienteDTO;
+import com.enzo.les.les.model.dtos.EnderecoDTO;
+import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
 import com.enzo.les.les.service.ClienteService;
+import com.enzo.les.les.service.EnderecoService;
+import com.enzo.les.les.service.CartaoCreditoService;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,19 +20,27 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
-    private final ClienteService clienteService;
 
-    public ClienteController(ClienteService clienteService) {
+    private final ClienteService clienteService;
+    private final EnderecoService enderecoService;
+    private final CartaoCreditoService cartaoCreditoService;
+
+    public ClienteController(ClienteService clienteService,
+                             EnderecoService enderecoService,
+                             CartaoCreditoService cartaoCreditoService) {
         this.clienteService = clienteService;
+        this.enderecoService = enderecoService;
+        this.cartaoCreditoService = cartaoCreditoService;
     }
 
-    @Operation(summary = "Listar todas os clientes", description = "retorna uma lista com todas os clientes cadastrados na API")
+    // ---------------- CLIENTES ----------------
+    @Operation(summary = "Listar todas os clientes", description = "Retorna uma lista com todas os clientes cadastrados")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @GetMapping
-    public List<ClienteDTO> getAllClientes(){
+    public List<ClienteDTO> getAllClientes() {
         return clienteService.listarTodos();
     }
 
@@ -38,54 +51,166 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> getPessoaById(@PathVariable Long id){
+    public ResponseEntity<ClienteDTO> getPessoaById(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
-    @Operation(summary = "Criar um cliente no sistema", description = "Cria um cliente no sistema, através das informações enviadas")
+    @Operation(summary = "Criar um cliente", description = "Cria um cliente no sistema com os dados informados")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Cliente criado com sucesso"),
-            @ApiResponse(responseCode = "500", description = "Erro interno do servidor"),
-            @ApiResponse(responseCode = "400", description = "Falha ao criar cadstro do cliente")
+            @ApiResponse(responseCode = "400", description = "Falha ao criar cliente"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping
-    public ResponseEntity<ClienteDTO> createPessoa(@Valid @RequestBody ClienteDTO dto){
+    public ResponseEntity<ClienteDTO> createPessoa(@Valid @RequestBody ClienteDTO dto) {
         return ResponseEntity.ok(clienteService.salvar(dto));
     }
 
-    @Operation(summary = "Atualiza os dados de um cliente", description = "Edita as informações de um cliente existente, baseando-se no seu id")
+    @Operation(summary = "Atualizar cliente", description = "Edita os dados de um cliente existente")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Informações atualizadas com sucesso"),
+            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> updatePessoa(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto){
+    public ResponseEntity<ClienteDTO> updatePessoa(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
         ClienteDTO existing = clienteService.atualizar(id, dto);
         return ResponseEntity.ok(existing);
     }
 
-    @Operation(summary = "Inativar um cliente do sistema", description = "Inativa o cadastro de um cliente do sistema, baseando-se no seu id")
+    @Operation(summary = "Inativar cliente", description = "Inativa o cadastro de um cliente pelo ID")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Cliente inativado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}/inativar")
-    public ResponseEntity<Void> inativarCliente(@PathVariable Long id){
+    public ResponseEntity<Void> inativarCliente(@PathVariable Long id) {
         clienteService.inativar(id);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Ativar um cliente do sistema", description = "Ativa o cadastro de um cliente do sistema, baseando-se no seu id")
+    @Operation(summary = "Ativar cliente", description = "Ativa o cadastro de um cliente pelo ID")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Cliente ativado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}/ativar")
-    public ResponseEntity<Void> ativarCliente(@PathVariable Long id){
+    public ResponseEntity<Void> ativarCliente(@PathVariable Long id) {
         clienteService.ativarCliente(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ---------------- ENDEREÇOS ----------------
+    @Operation(summary = "Listar endereços", description = "Retorna todos os endereços cadastrados")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de endereços retornada"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/enderecos")
+    public List<EnderecoDTO> getAllEnderecos() {
+        return enderecoService.listarTodos();
+    }
+
+    @Operation(summary = "Buscar endereço por ID", description = "Retorna um endereço com base no ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Endereço encontrado"),
+            @ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/enderecos/{id}")
+    public ResponseEntity<EnderecoDTO> getEnderecoById(@PathVariable Long id) {
+        return ResponseEntity.ok(enderecoService.buscarPorId(id));
+    }
+
+    @Operation(summary = "Criar endereço", description = "Cadastra um novo endereço")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Endereço criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Falha ao criar endereço"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping("/enderecos")
+    public ResponseEntity<EnderecoDTO> createEndereco(@Valid @RequestBody EnderecoDTO dto) {
+        return ResponseEntity.ok(enderecoService.salvar(dto));
+    }
+
+    @Operation(summary = "Atualizar endereço", description = "Edita um endereço existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Endereço atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PutMapping("/enderecos/{id}")
+    public ResponseEntity<EnderecoDTO> updateEndereco(@PathVariable Long id, @Valid @RequestBody EnderecoDTO dto) {
+        return ResponseEntity.ok(enderecoService.atualizar(id, dto));
+    }
+
+    @Operation(summary = "Deletar endereço", description = "Remove um endereço pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Endereço deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Endereço não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @DeleteMapping("/enderecos/{id}")
+    public ResponseEntity<Void> deleteEndereco(@PathVariable Long id) {
+        enderecoService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ---------------- CARTÕES ----------------
+    @Operation(summary = "Listar cartões", description = "Retorna todos os cartões cadastrados")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de cartões retornada"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/cartoes")
+    public List<CartaoCreditoDTO> getAllCartoes() {
+        return cartaoCreditoService.listarTodos();
+    }
+
+    @Operation(summary = "Buscar cartão por ID", description = "Retorna um cartão com base no ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cartão encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cartão não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping("/cartoes/{id}")
+    public ResponseEntity<CartaoCreditoDTO> getCartaoById(@PathVariable Long id) {
+        return ResponseEntity.ok(cartaoCreditoService.buscarPorId(id));
+    }
+
+    @Operation(summary = "Criar cartão", description = "Cadastra um novo cartão de crédito")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cartão criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Falha ao criar cartão"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping("/cartoes")
+    public ResponseEntity<CartaoCreditoDTO> createCartao(@Valid @RequestBody CartaoCreditoDTO dto) {
+        return ResponseEntity.ok(cartaoCreditoService.salvar(dto));
+    }
+
+    @Operation(summary = "Atualizar cartão", description = "Edita os dados de um cartão existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cartão atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cartão não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PutMapping("/cartoes/{id}")
+    public ResponseEntity<CartaoCreditoDTO> updateCartao(@PathVariable Long id, @Valid @RequestBody CartaoCreditoDTO dto) {
+        return ResponseEntity.ok(cartaoCreditoService.atualizar(id, dto));
+    }
+
+    @Operation(summary = "Deletar cartão", description = "Remove um cartão pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Cartão deletado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cartão não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @DeleteMapping("/cartoes/{id}")
+    public ResponseEntity<Void> deleteCartao(@PathVariable Long id) {
+        cartaoCreditoService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

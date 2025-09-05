@@ -3,7 +3,6 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enzo.les.les.enums.TipoTelefoneEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
