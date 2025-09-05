@@ -4,7 +4,9 @@ package com.enzo.les.les.service;
 
 import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
 import com.enzo.les.les.model.entities.CartaoCredito;
+import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.CartaoCreditoRepository;
+import com.enzo.les.les.repository.ClienteRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,23 +19,27 @@ public class CartaoCreditoService {
     @Autowired
     CartaoCreditoRepository cartaoCreditoRepository;
 
+    @Autowired
+    ClienteRepository clienteRepository;
 
-    //create
+
+
     public CartaoCreditoDTO salvar(CartaoCreditoDTO cartaoCreditoDTO) {
         CartaoCredito cartao = cartaoCreditoDTO.mapToEntity();
+        Cliente cliente = clienteRepository.findById(cartaoCreditoDTO.getClienteId()).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id" + cartaoCreditoDTO.getClienteId()));
+        cartao.setCliente(cliente);
         cartaoCreditoRepository.save(cartao);
-
         return cartao.mapToDTO();
     }
 
-    // READ - buscar por id
+
     public CartaoCreditoDTO buscarPorId(Long id) {
         CartaoCredito cartao = cartaoCreditoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
         return cartao.mapToDTO();
     }
 
-    // READ - listar todos
+
     public List<CartaoCreditoDTO> listarTodos() {
         return cartaoCreditoRepository.findAll()
                 .stream()
@@ -41,7 +47,7 @@ public class CartaoCreditoService {
                 .collect(Collectors.toList());
     }
 
-    // UPDATE
+
     public CartaoCreditoDTO atualizar(Long id, CartaoCreditoDTO dto) {
         CartaoCredito cartaoExistente = cartaoCreditoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cartao não encontrado com id " + id));
@@ -51,7 +57,7 @@ public class CartaoCreditoService {
         return cartaoExistente.mapToDTO();
     }
 
-    // DELETE lógico (inativar)
+
     public void delete(Long id) {
         CartaoCredito cartaoCredito = cartaoCreditoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cartao não encontrado com id " + id));
