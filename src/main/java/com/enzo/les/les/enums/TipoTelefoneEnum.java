@@ -1,5 +1,5 @@
 package com.enzo.les.les.enums;
 
-public enum TipoTelefone {
+public enum TipoTelefoneEnum {
     FIXO, MOVEL
 }

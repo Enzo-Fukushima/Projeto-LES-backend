@@ -3,7 +3,7 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enzo.les.les.enums.TipoTelefone;
+import com.enzo.les.les.enums.TipoTelefoneEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +63,7 @@ public class ClienteService {
         clienteExistente.setDataNascimento(clienteDTO.getDataNascimento());
         clienteExistente.setEmail(clienteDTO.getEmail());
         clienteExistente.setSenha(clienteDTO.getSenha());
-        clienteExistente.setTipoTelefone(TipoTelefone.valueOf(clienteDTO.getTipoTelefone()));
+        clienteExistente.setTipoTelefone(TipoTelefoneEnum.valueOf(clienteDTO.getTipoTelefone()));
         clienteExistente.setDdd(clienteDTO.getDdd());
         clienteExistente.setNumeroTelefone(clienteDTO.getNumeroTelefone());
         clienteExistente.setAtivo(clienteDTO.isAtivo());

@@ -1,5 +1,5 @@
 package com.enzo.les.les.enums;
 
-public enum TipoResidencia {
+public enum TipoResidenciaEnum {
     CASA, APARTAMENTO
 }

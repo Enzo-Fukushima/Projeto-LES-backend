@@ -1,8 +1,19 @@
 package com.enzo.les.les.model.entities;
 
-import com.enzo.les.les.enums.TipoLogradouro;
-import com.enzo.les.les.enums.TipoResidencia;
-import jakarta.persistence.*;
+import com.enzo.les.les.enums.EstadoEnum;
+import com.enzo.les.les.enums.TipoLogradouroEnum;
+import com.enzo.les.les.enums.TipoResidenciaEnum;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
@@ -14,15 +25,17 @@ public class Endereco {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private TipoResidencia tipoResidencia;
+    private TipoResidenciaEnum tipoResidencia;
     @Enumerated(EnumType.STRING)
-    private TipoLogradouro tipoLogradouro;
+    private TipoLogradouroEnum tipoLogradouro;
     private String logradouro;
     private Integer numero;
     private String bairro;
     private String cep;
     private String cidade;
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 2)
+    private EstadoEnum estado;
     private String pais;
     private String observacoes;
 

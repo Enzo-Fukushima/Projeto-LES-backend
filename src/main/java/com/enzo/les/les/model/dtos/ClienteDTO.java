@@ -3,17 +3,16 @@ package com.enzo.les.les.model.dtos;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.enzo.les.les.enums.TipoTelefone;
+import com.enzo.les.les.enums.TipoTelefoneEnum;
+import com.enzo.les.les.model.entities.CartaoCredito;
+import com.enzo.les.les.model.entities.Cliente;
+import com.enzo.les.les.model.entities.Endereco;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import com.enzo.les.les.model.entities.Cliente;
-import com.enzo.les.les.model.entities.Endereco;
-import com.enzo.les.les.model.entities.CartaoCredito;
-
 import lombok.Data;
 
 @Data
@@ -73,7 +72,7 @@ public class ClienteDTO {
         cliente.setDataNascimento(this.dataNascimento);
         cliente.setEmail(this.email);
         cliente.setSenha(this.senha);
-        cliente.setTipoTelefone(TipoTelefone.valueOf(this.tipoTelefone));
+        cliente.setTipoTelefone(TipoTelefoneEnum.valueOf(this.tipoTelefone));
         cliente.setDdd(this.ddd);
         cliente.setNumeroTelefone(this.numeroTelefone);
         cliente.setAtivo(this.ativo);
