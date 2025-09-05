@@ -1,5 +1,7 @@
 package com.enzo.les.les.model.entities;
 
+import com.enzo.les.les.enums.TipoLogradouro;
+import com.enzo.les.les.enums.TipoResidencia;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,9 +14,9 @@ public class Endereco {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private String tipoResidencia;
+    private TipoResidencia tipoResidencia;
     @Enumerated(EnumType.STRING)
-    private String tipoLogradouro;
+    private TipoLogradouro tipoLogradouro;
     private String logradouro;
     private Integer numero;
     private String bairro;

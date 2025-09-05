@@ -1,5 +1,6 @@
 package com.enzo.les.les.model.entities;
 
+import com.enzo.les.les.enums.TipoTelefone;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -39,7 +40,7 @@ public class Cliente {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private String tipoTelefone;
+    private TipoTelefone tipoTelefone;
 
     @Column(nullable = false, length = 3)
     private String ddd;
@@ -68,7 +69,7 @@ public class Cliente {
         dto.setDataNascimento(this.getDataNascimento());
         dto.setEmail(this.getEmail());
         dto.setSenha(this.getSenha());
-        dto.setTipoTelefone(this.getTipoTelefone());
+        dto.setTipoTelefone(String.valueOf(this.getTipoTelefone()));
         dto.setDdd(this.getDdd());
         dto.setNumeroTelefone(this.getNumeroTelefone());
         dto.setAtivo(this.isAtivo());

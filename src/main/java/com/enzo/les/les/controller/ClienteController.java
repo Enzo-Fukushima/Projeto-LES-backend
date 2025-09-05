@@ -12,8 +12,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.enzo.les.les.model.entities.Cliente;
-
 @RestController
 @RequestMapping("/api/clientes")
 public class ClienteController {
@@ -67,15 +65,27 @@ public class ClienteController {
         return ResponseEntity.ok(existing);
     }
 
-    @Operation(summary = "Excluir uma pessoa do sistema", description = "Deleta uma pessoa do sistema, baseando-se no seu id")
+    @Operation(summary = "Inativar um cliente do sistema", description = "Inativa o cadastro de um cliente do sistema, baseando-se no seu id")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Pessoa deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Pessoa não encontrada"),
+            @ApiResponse(responseCode = "204", description = "Cliente inativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePessoa(@PathVariable Long id){
+    @PutMapping("/{id}/inativar")
+    public ResponseEntity<Void> inativarCliente(@PathVariable Long id){
         clienteService.inativar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Ativar um cliente do sistema", description = "Ativa o cadastro de um cliente do sistema, baseando-se no seu id")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Cliente ativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PutMapping("/{id}/ativar")
+    public ResponseEntity<Void> ativarCliente(@PathVariable Long id){
+        clienteService.ativarCliente(id);
         return ResponseEntity.noContent().build();
     }
 }

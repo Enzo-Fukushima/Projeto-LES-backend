@@ -3,6 +3,7 @@ package com.enzo.les.les.model.dtos;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.enzo.les.les.enums.TipoTelefone;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -72,7 +73,7 @@ public class ClienteDTO {
         cliente.setDataNascimento(this.dataNascimento);
         cliente.setEmail(this.email);
         cliente.setSenha(this.senha);
-        cliente.setTipoTelefone(this.tipoTelefone);
+        cliente.setTipoTelefone(TipoTelefone.valueOf(this.tipoTelefone));
         cliente.setDdd(this.ddd);
         cliente.setNumeroTelefone(this.numeroTelefone);
         cliente.setAtivo(this.ativo);

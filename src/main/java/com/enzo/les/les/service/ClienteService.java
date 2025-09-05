@@ -3,6 +3,7 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enzo.les.les.enums.TipoTelefone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class ClienteService {
         clienteExistente.setDataNascimento(clienteDTO.getDataNascimento());
         clienteExistente.setEmail(clienteDTO.getEmail());
         clienteExistente.setSenha(clienteDTO.getSenha());
-        clienteExistente.setTipoTelefone(clienteDTO.getTipoTelefone());
+        clienteExistente.setTipoTelefone(TipoTelefone.valueOf(clienteDTO.getTipoTelefone()));
         clienteExistente.setDdd(clienteDTO.getDdd());
         clienteExistente.setNumeroTelefone(clienteDTO.getNumeroTelefone());
         clienteExistente.setAtivo(clienteDTO.isAtivo());
@@ -77,6 +78,13 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
         cliente.setAtivo(false);
+        clienteRepository.save(cliente);
+    }
+
+    public void ativarCliente(Long id) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        cliente.setAtivo(true);
         clienteRepository.save(cliente);
     }
 }
