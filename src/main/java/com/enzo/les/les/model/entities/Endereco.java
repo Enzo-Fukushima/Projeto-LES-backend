@@ -47,8 +47,8 @@ public class Endereco {
     public EnderecoDTO mapToDTO() {
         EnderecoDTO dto = new EnderecoDTO();
         dto.setId(this.id);
-        dto.setTipoResidencia(this.tipoResidencia != null ? this.tipoResidencia.name() : null);
-        dto.setTipoLogradouro(this.tipoLogradouro != null ? this.tipoLogradouro.name() : null);
+        dto.setTipoResidencia(this.tipoResidencia);
+        dto.setTipoLogradouro(this.tipoLogradouro);
         dto.setLogradouro(this.logradouro);
         dto.setNumero(this.numero);
         dto.setBairro(this.bairro);
@@ -59,8 +59,22 @@ public class Endereco {
         dto.setObservacoes(this.observacoes);
         if (this.cliente != null) {
             dto.setClienteId(this.cliente.getId());
-            dto.setCliente(this.cliente);
         }
         return dto;
     }
+
+    public void update(EnderecoDTO dto) {
+        dto.setBairro(this.getBairro());
+        dto.setCep(this.getCep());
+        dto.setClienteId(this.getCliente().getId());
+        dto.setEstado(this.getEstado());
+        dto.setLogradouro(this.getLogradouro());
+        dto.setCidade(this.getCidade());
+        dto.setTipoLogradouro(getTipoLogradouro());
+        dto.setTipoResidencia(this.getTipoResidencia());
+        dto.setNumero(this.getNumero());
+        dto.setPais(this.getPais());
+        dto.setObservacoes(this.getObservacoes());
+    }
+
 }
