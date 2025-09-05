@@ -88,4 +88,31 @@ public class Cliente {
         dto.setRanking(this.getRanking());
         return dto;
     }
+
+
+    public void updateFromDTO(ClienteDTO dto) {
+        this.setNome(dto.getNome());
+        this.setCpf(dto.getCpf());
+        this.setGenero(dto.getGenero());
+        this.setDataNascimento(dto.getDataNascimento());
+        this.setEmail(dto.getEmail());
+        this.setSenha(dto.getSenha());
+        this.setTipoTelefone(TipoTelefoneEnum.valueOf(dto.getTipoTelefone()));
+        this.setDdd(dto.getDdd());
+        this.setNumeroTelefone(dto.getNumeroTelefone());
+        this.setAtivo(dto.isAtivo());
+        this.setRanking(dto.getRanking());
+
+        // atualizar endereços
+        if (dto.getEnderecos() != null) {
+            dto.getEnderecos().forEach(e -> e.setCliente(this));
+            this.setEnderecos(dto.getEnderecos());
+        }
+
+        // atualizar cartões
+        if (dto.getCartoes() != null) {
+            dto.getCartoes().forEach(c -> c.setCliente(this));
+            this.setCartoes(dto.getCartoes());
+        }
+    }
 }

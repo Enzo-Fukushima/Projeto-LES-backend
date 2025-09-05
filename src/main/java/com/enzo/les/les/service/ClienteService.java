@@ -56,21 +56,9 @@ public class ClienteService {
         Cliente clienteExistente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
 
-        // Atualiza campos
-        clienteExistente.setNome(clienteDTO.getNome());
-        clienteExistente.setCpf(clienteDTO.getCpf());
-        clienteExistente.setGenero(clienteDTO.getGenero());
-        clienteExistente.setDataNascimento(clienteDTO.getDataNascimento());
-        clienteExistente.setEmail(clienteDTO.getEmail());
-        clienteExistente.setSenha(clienteDTO.getSenha());
-        clienteExistente.setTipoTelefone(TipoTelefoneEnum.valueOf(clienteDTO.getTipoTelefone()));
-        clienteExistente.setDdd(clienteDTO.getDdd());
-        clienteExistente.setNumeroTelefone(clienteDTO.getNumeroTelefone());
-        clienteExistente.setAtivo(clienteDTO.isAtivo());
-        clienteExistente.setRanking(clienteDTO.getRanking());
-
-        Cliente atualizado = clienteRepository.save(clienteExistente);
-        return atualizado.mapToDTO();
+        clienteExistente.updateFromDTO(clienteDTO);
+        clienteRepository.save(clienteExistente);
+        return clienteExistente.mapToDTO();
     }
 
     // DELETE lógico (inativar)
