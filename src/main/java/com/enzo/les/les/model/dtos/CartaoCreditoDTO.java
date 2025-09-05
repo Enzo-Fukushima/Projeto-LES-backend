@@ -2,7 +2,6 @@ package com.enzo.les.les.model.dtos;
 
 import com.enzo.les.les.enums.BandeiraCartaoEnum;
 import com.enzo.les.les.model.entities.CartaoCredito;
-import com.enzo.les.les.model.entities.Cliente;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -30,8 +29,8 @@ public class CartaoCreditoDTO {
     @NotBlank(message = "Bandeira do cartão não pode ser vazia")
     private BandeiraCartaoEnum bandeira; // idealmente ENUM
 
-    private Cliente cliente;
-
+    @NotBlank(message = "Cliente ID não pode ser vazio")
+    private Long clienteId;
 
     // 🔹 Conversão para entidade CartaoCredito
     public CartaoCredito mapToEntity() {
@@ -41,7 +40,6 @@ public class CartaoCreditoDTO {
         cartao.setNomeImpresso(this.nomeImpresso);
         cartao.setCodigoSeguranca(this.codigoSeguranca);
         cartao.setBandeira(this.bandeira);
-        cartao.setCliente(this.cliente);
         return cartao;
     }
 }
