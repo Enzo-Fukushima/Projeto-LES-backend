@@ -56,7 +56,7 @@ public class ClienteService {
         Cliente clienteExistente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
 
-        clienteExistente.updateFromDTO(clienteDTO);
+        clienteExistente.update(clienteDTO);
         clienteRepository.save(clienteExistente);
         return clienteExistente.mapToDTO();
     }

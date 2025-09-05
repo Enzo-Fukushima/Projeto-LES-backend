@@ -90,7 +90,7 @@ public class Cliente {
     }
 
 
-    public void updateFromDTO(ClienteDTO dto) {
+    public void update(ClienteDTO dto) {
         this.setNome(dto.getNome());
         this.setCpf(dto.getCpf());
         this.setGenero(dto.getGenero());
