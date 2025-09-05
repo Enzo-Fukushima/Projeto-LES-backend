@@ -2,7 +2,6 @@ package com.enzo.les.les.model.dtos;
 
 
 import com.enzo.les.les.enums.EstadoEnum;
-import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.model.entities.Endereco;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
@@ -15,9 +14,9 @@ import lombok.Data;
 public class EnderecoDTO {
     private Long id;
 
-    private String tipoResidencia;
+    private TipoResidenciaEnum tipoResidencia;
 
-    private String tipoLogradouro;
+    private TipoLogradouroEnum tipoLogradouro;
 
     @NotBlank(message = "Logradouro não pode ser vazio")
     private String logradouro;
@@ -42,17 +41,16 @@ public class EnderecoDTO {
     @NotBlank(message = "Observações não pode ser vazio")
     private String observacoes;
     
-    @NotBlank(message = "Cliente ID não pode ser vazio")
+    @NotNull(message = "Cliente ID não pode ser vazio")
     private Long clienteId;
 
-    private Cliente Cliente;
 
     // 🔹 Conversão para entidade Endereco
     public Endereco mapToEntity() {
         Endereco endereco = new Endereco();
         endereco.setId(this.id);
-        endereco.setTipoResidencia(TipoResidenciaEnum.valueOf(this.tipoResidencia));
-        endereco.setTipoLogradouro(TipoLogradouroEnum.valueOf(this.tipoLogradouro));
+        endereco.setTipoResidencia(this.tipoResidencia);
+        endereco.setTipoLogradouro(this.tipoLogradouro);
         endereco.setLogradouro(this.logradouro);
         endereco.setNumero(this.numero);
         endereco.setBairro(this.bairro);
@@ -61,7 +59,7 @@ public class EnderecoDTO {
         endereco.setEstado(this.estado);
         endereco.setPais(this.pais);
         endereco.setObservacoes(this.observacoes);
-        // Cliente deve ser setado no serviço
+
         return endereco;
     } 
 }
