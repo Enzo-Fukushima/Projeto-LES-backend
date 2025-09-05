@@ -1,5 +1,6 @@
 package com.enzo.les.les.model.entities;
 
+import com.enzo.les.les.enums.BandeiraCartaoEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class CartaoCredito {
     // Relacionamento com Bandeira (RN0025)
     @ManyToOne
     @JoinColumn(name = "bandeira_id", nullable = false)
-    private BandeiraCartao bandeira;
+    private BandeiraCartaoEnum bandeira;
 
     // Relacionamento com Cliente (um cliente pode ter vários cartões)
     @ManyToOne
