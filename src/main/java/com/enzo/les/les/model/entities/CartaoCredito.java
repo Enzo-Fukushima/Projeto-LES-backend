@@ -1,6 +1,7 @@
 package com.enzo.les.les.model.entities;
 
 import com.enzo.les.les.enums.BandeiraCartaoEnum;
+import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,4 +34,24 @@ public class CartaoCredito {
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+
+    public CartaoCreditoDTO mapToDTO() {
+        CartaoCreditoDTO dto = new CartaoCreditoDTO();
+        dto.setId(this.id);
+        dto.setNumeroCartao(this.numeroCartao);
+        dto.setNomeImpresso(this.nomeImpresso);
+        dto.setCodigoSeguranca(this.codigoSeguranca);
+        dto.setBandeira(this.bandeira);
+        dto.setCliente(this.cliente);
+        return dto;
+    }
+
+    public void update(CartaoCreditoDTO dto){
+        this.setBandeira(dto.getBandeira());
+        this.setCliente(dto.getCliente());
+        this.setNumeroCartao(dto.getNumeroCartao());
+        this.setNomeImpresso(dto.getNomeImpresso());
+        this.setCodigoSeguranca(dto.getCodigoSeguranca());
+    }
 }
