@@ -3,6 +3,7 @@ package com.enzo.les.les.model.entities;
 import com.enzo.les.les.enums.EstadoEnum;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
+import com.enzo.les.les.model.dtos.EnderecoDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,4 +43,24 @@ public class Endereco {
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+    public EnderecoDTO mapToDTO() {
+        EnderecoDTO dto = new EnderecoDTO();
+        dto.setId(this.id);
+        dto.setTipoResidencia(this.tipoResidencia != null ? this.tipoResidencia.name() : null);
+        dto.setTipoLogradouro(this.tipoLogradouro != null ? this.tipoLogradouro.name() : null);
+        dto.setLogradouro(this.logradouro);
+        dto.setNumero(this.numero);
+        dto.setBairro(this.bairro);
+        dto.setCep(this.cep);
+        dto.setCidade(this.cidade);
+        dto.setEstado(this.estado);
+        dto.setPais(this.pais);
+        dto.setObservacoes(this.observacoes);
+        if (this.cliente != null) {
+            dto.setClienteId(this.cliente.getId());
+            dto.setCliente(this.cliente);
+        }
+        return dto;
+    }
 }
