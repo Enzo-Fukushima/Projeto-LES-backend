@@ -3,13 +3,14 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enzo.les.les.dtos.ClienteDTO;
 import com.enzo.les.les.dtos.CreateClienteDTO;
 import com.enzo.les.les.dtos.CreateClienteEnderecoDTO;
 import com.enzo.les.les.model.entities.Endereco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.enzo.les.les.dtos.ClienteDTO;
+import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
 import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.ClienteRepository;
 
@@ -22,7 +23,7 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     // CREATE
-    public ClienteDTO salvar(CreateClienteDTO clienteDTO) {
+    public ClienteDetalhadoDTO salvar(CreateClienteDTO clienteDTO) {
         if (clienteRepository.existsByEmail(clienteDTO.getEmail())) {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
@@ -41,32 +42,32 @@ public class ClienteService {
         Cliente salvo = clienteRepository.save(cliente);
 
         // Retorna DTO
-        return salvo.mapToDTO();
+        return salvo.mapToDTODetalhado();
     }
 
     // READ - buscar por id
-    public ClienteDTO buscarPorId(Long id) {
+    public ClienteDetalhadoDTO buscarPorId(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
-        return cliente.mapToDTO();
+        return cliente.mapToDTODetalhado();
     }
 
     // READ - listar todos
     public List<ClienteDTO> listarTodos() {
         return clienteRepository.findAll()
                 .stream()
-                .map(Cliente::mapToDTO)
+                .map(Cliente::mapToDTOSimples)
                 .collect(Collectors.toList());
     }
 
     // UPDATE
-    public ClienteDTO atualizar(Long id, ClienteDTO clienteDTO) {
+    public ClienteDetalhadoDTO atualizar(Long id, ClienteDetalhadoDTO clienteDTO) {
         Cliente clienteExistente = clienteRepository.findById(clienteDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
 
         clienteExistente.update(clienteDTO);
         clienteRepository.save(clienteExistente);
-        return clienteExistente.mapToDTO();
+        return clienteExistente.mapToDTODetalhado();
     }
 
     // DELETE lógico (inativar)
@@ -84,9 +85,9 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public ClienteDTO alterarSenha(Long id, ClienteDTO dto){
+    public ClienteDetalhadoDTO alterarSenha(Long id, ClienteDetalhadoDTO dto){
         Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
         cliente.updateSenha(dto);
-        return cliente.mapToDTO();
+        return cliente.mapToDTODetalhado();
     }
 }

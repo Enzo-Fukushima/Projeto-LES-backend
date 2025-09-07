@@ -49,7 +49,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> getClienteById(@PathVariable Long id) {
+    public ResponseEntity<ClienteDetalhadoDTO> getClienteById(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
@@ -60,7 +60,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping
-    public ResponseEntity<ClienteDTO> createCliente(@Valid @RequestBody CreateClienteDTO dto) {
+    public ResponseEntity<ClienteDetalhadoDTO> createCliente(@Valid @RequestBody CreateClienteDTO dto) {
         return ResponseEntity.ok(clienteService.salvar(dto));
     }
 
@@ -71,8 +71,8 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
-        ClienteDTO existing = clienteService.atualizar(id, dto);
+    public ResponseEntity<ClienteDetalhadoDTO> updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteDetalhadoDTO dto) {
+        ClienteDetalhadoDTO existing = clienteService.atualizar(id, dto);
         return ResponseEntity.ok(existing);
     }
 
@@ -83,8 +83,8 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}/senha")
-    public ResponseEntity<ClienteDTO> updateClienteSenha(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
-        ClienteDTO existing = clienteService.alterarSenha(id, dto);
+    public ResponseEntity<ClienteDetalhadoDTO> updateClienteSenha(@PathVariable Long id, @Valid @RequestBody ClienteDetalhadoDTO dto) {
+        ClienteDetalhadoDTO existing = clienteService.alterarSenha(id, dto);
         return ResponseEntity.ok(existing);
     }
 

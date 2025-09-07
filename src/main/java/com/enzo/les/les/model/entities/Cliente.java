@@ -4,8 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enzo.les.les.enums.TipoTelefoneEnum;
 import com.enzo.les.les.dtos.ClienteDTO;
+import com.enzo.les.les.enums.TipoTelefoneEnum;
+import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
 import com.enzo.les.les.dtos.EnderecoDTO;
 import com.enzo.les.les.dtos.CartaoCreditoDTO;
 
@@ -75,8 +76,8 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CartaoCredito> cartoes = new ArrayList<>();
 
-    public ClienteDTO mapToDTO() {
-        ClienteDTO dto = new ClienteDTO();
+    public ClienteDetalhadoDTO mapToDTODetalhado() {
+        ClienteDetalhadoDTO dto = new ClienteDetalhadoDTO();
         dto.setId(this.id);
         dto.setNome(this.nome);
         dto.setCpf(this.cpf);
@@ -107,7 +108,23 @@ public class Cliente {
         return dto;
     }
 
-    public void update(ClienteDTO dto) {
+    public ClienteDTO mapToDTOSimples() {
+        ClienteDTO dto = new ClienteDTO();
+        dto.setId(this.id);
+        dto.setNome(this.nome);
+        dto.setCpf(this.cpf);
+        dto.setGenero(this.genero);
+        dto.setDataNascimento(this.dataNascimento);
+        dto.setEmail(this.email);
+        dto.setTipoTelefone(this.tipoTelefone.name());
+        dto.setDdd(this.ddd);
+        dto.setNumeroTelefone(this.numeroTelefone);
+        dto.setAtivo(this.ativo);
+        dto.setRanking(this.ranking);
+        return dto;
+    }
+
+    public void update(ClienteDetalhadoDTO dto) {
         this.nome = dto.getNome();
         this.cpf = dto.getCpf();
         this.genero = dto.getGenero();
@@ -121,7 +138,7 @@ public class Cliente {
         this.ranking = dto.getRanking();
     }
 
-    public void updateSenha(ClienteDTO dto){
+    public void updateSenha(ClienteDetalhadoDTO dto){
         this.senha = dto.getSenha();
     }
     public void addEndereco(Endereco endereco) {
