@@ -2,9 +2,7 @@ package com.enzo.les.les.controller;
 
 import java.util.List;
 
-import com.enzo.les.les.model.dtos.ClienteDTO;
-import com.enzo.les.les.model.dtos.EnderecoDTO;
-import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
+import com.enzo.les.les.dtos.*;
 import com.enzo.les.les.service.ClienteService;
 import com.enzo.les.les.service.EnderecoService;
 import com.enzo.les.les.service.CartaoCreditoService;
@@ -51,7 +49,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteDTO> getPessoaById(@PathVariable Long id) {
+    public ResponseEntity<ClienteDTO> getClienteById(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
@@ -62,7 +60,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping
-    public ResponseEntity<ClienteDTO> createPessoa(@Valid @RequestBody ClienteDTO dto) {
+    public ResponseEntity<ClienteDTO> createCliente(@Valid @RequestBody CreateClienteDTO dto) {
         return ResponseEntity.ok(clienteService.salvar(dto));
     }
 
@@ -73,8 +71,20 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDTO> updatePessoa(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
+    public ResponseEntity<ClienteDTO> updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
         ClienteDTO existing = clienteService.atualizar(id, dto);
+        return ResponseEntity.ok(existing);
+    }
+
+    @Operation(summary = "Atualizar senha do cliente", description = "Edita a senha de um cliente existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PutMapping("/{id}/senha")
+    public ResponseEntity<ClienteDTO> updateClienteSenha(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
+        ClienteDTO existing = clienteService.alterarSenha(id, dto);
         return ResponseEntity.ok(existing);
     }
 

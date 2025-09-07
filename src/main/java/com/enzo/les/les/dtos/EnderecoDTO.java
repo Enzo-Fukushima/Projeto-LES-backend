@@ -1,4 +1,4 @@
-package com.enzo.les.les.model.dtos;
+package com.enzo.les.les.dtos;
 
 
 import com.enzo.les.les.enums.EstadoEnum;
@@ -45,7 +45,6 @@ public class EnderecoDTO {
     private Long clienteId;
 
 
-    // 🔹 Conversão para entidade Endereco
     public Endereco mapToEntity() {
         Endereco endereco = new Endereco();
         endereco.setId(this.id);

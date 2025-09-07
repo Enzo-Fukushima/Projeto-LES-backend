@@ -3,10 +3,13 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.enzo.les.les.dtos.CreateClienteDTO;
+import com.enzo.les.les.dtos.CreateClienteEnderecoDTO;
+import com.enzo.les.les.model.entities.Endereco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.enzo.les.les.model.dtos.ClienteDTO;
+import com.enzo.les.les.dtos.ClienteDTO;
 import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.ClienteRepository;
 
@@ -19,7 +22,7 @@ public class ClienteService {
     private ClienteRepository clienteRepository;
 
     // CREATE
-    public ClienteDTO salvar(ClienteDTO clienteDTO) {
+    public ClienteDTO salvar(CreateClienteDTO clienteDTO) {
         if (clienteRepository.existsByEmail(clienteDTO.getEmail())) {
             throw new IllegalArgumentException("Email já cadastrado.");
         }
@@ -29,6 +32,12 @@ public class ClienteService {
 
         // Converte DTO para Entity
         Cliente cliente = clienteDTO.mapToEntity();
+        if(clienteDTO.getEnderecos() != null){
+            for(CreateClienteEnderecoDTO endDTO : clienteDTO.getEnderecos()){
+                Endereco endereco = endDTO.mapToEntity();
+                cliente.addEndereco(endereco);
+            }
+        }
         Cliente salvo = clienteRepository.save(cliente);
 
         // Retorna DTO
@@ -52,7 +61,7 @@ public class ClienteService {
 
     // UPDATE
     public ClienteDTO atualizar(Long id, ClienteDTO clienteDTO) {
-        Cliente clienteExistente = clienteRepository.findById(id)
+        Cliente clienteExistente = clienteRepository.findById(clienteDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
 
         clienteExistente.update(clienteDTO);
@@ -73,5 +82,11 @@ public class ClienteService {
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
         cliente.setAtivo(true);
         clienteRepository.save(cliente);
+    }
+
+    public ClienteDTO alterarSenha(Long id, ClienteDTO dto){
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        cliente.updateSenha(dto);
+        return cliente.mapToDTO();
     }
 }

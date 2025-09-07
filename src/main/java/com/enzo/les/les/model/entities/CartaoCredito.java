@@ -1,7 +1,7 @@
 package com.enzo.les.les.model.entities;
 
 import com.enzo.les.les.enums.BandeiraCartaoEnum;
-import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
+import com.enzo.les.les.dtos.CartaoCreditoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,6 +40,7 @@ public class CartaoCredito {
         dto.setNomeImpresso(this.nomeImpresso);
         dto.setCodigoSeguranca(this.codigoSeguranca);
         dto.setBandeira(this.bandeira);
+        dto.setClienteId(this.cliente != null ? this.cliente.getId() : null);
         return dto;
     }
 

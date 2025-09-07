@@ -7,7 +7,7 @@ import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.enzo.les.les.model.dtos.EnderecoDTO;
+import com.enzo.les.les.dtos.EnderecoDTO;
 import com.enzo.les.les.model.entities.Endereco;
 import com.enzo.les.les.repository.EnderecoRepository;
 
@@ -23,12 +23,12 @@ public class EnderecoService {
     private ClienteRepository clienteRepository;
 
     // CREATE
-    public EnderecoDTO salvar(EnderecoDTO enderecoDTO) {
-        Endereco endereco = enderecoDTO.mapToEntity();
-        Cliente cliente = clienteRepository.findById(enderecoDTO.getClienteId()).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id" + enderecoDTO.getClienteId()));
-        endereco.setCliente(cliente);
-        Endereco salvo = enderecoRepository.save(endereco);
-        return salvo.mapToDTO();
+    public EnderecoDTO salvar(EnderecoDTO dto) {
+        Cliente cliente = clienteRepository.findById(dto.getClienteId()).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id" + dto.getClienteId()));
+        Endereco endereco = dto.mapToEntity();
+        cliente.addEndereco(endereco);
+        clienteRepository.save(cliente);
+        return endereco.mapToDTO();
     }
 
     // READ - buscar por id
@@ -56,10 +56,15 @@ public class EnderecoService {
         return enderecoExistente.mapToDTO();
     }
 
-    // DELETE lógico ou físico (aqui deixei físico, se quiser lógico é só usar um boolean "ativo")
     public void deletar(Long id) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado com id " + id));
-        enderecoRepository.delete(endereco);
+        Cliente cliente = endereco.getCliente();
+        if (cliente == null){
+            throw new IllegalStateException("Endereço não está associado a nenhum cliente");
+        }
+
+        cliente.removeEndereco(endereco);
+        clienteRepository.save(cliente);
     }
 }

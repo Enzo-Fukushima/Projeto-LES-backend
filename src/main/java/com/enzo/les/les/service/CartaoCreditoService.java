@@ -2,7 +2,7 @@ package com.enzo.les.les.service;
 
 
 
-import com.enzo.les.les.model.dtos.CartaoCreditoDTO;
+import com.enzo.les.les.dtos.CartaoCreditoDTO;
 import com.enzo.les.les.model.entities.CartaoCredito;
 import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.CartaoCreditoRepository;
@@ -24,14 +24,14 @@ public class CartaoCreditoService {
 
 
 
-    public CartaoCreditoDTO salvar(CartaoCreditoDTO cartaoCreditoDTO) {
-        CartaoCredito cartao = cartaoCreditoDTO.mapToEntity();
-        Cliente cliente = clienteRepository.findById(cartaoCreditoDTO.getClienteId()).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id" + cartaoCreditoDTO.getClienteId()));
-        cartao.setCliente(cliente);
-        cartaoCreditoRepository.save(cartao);
+    public CartaoCreditoDTO salvar(CartaoCreditoDTO dto) {
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id" + dto.getClienteId()));
+        CartaoCredito cartao = dto.mapToEntity();
+        cliente.addCartaoCredito(cartao);
+        clienteRepository.save(cliente);
         return cartao.mapToDTO();
     }
-
 
     public CartaoCreditoDTO buscarPorId(Long id) {
         CartaoCredito cartao = cartaoCreditoRepository.findById(id)
@@ -59,9 +59,15 @@ public class CartaoCreditoService {
 
 
     public void delete(Long id) {
-        CartaoCredito cartaoCredito = cartaoCreditoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cartao não encontrado com id " + id));
-        cartaoCreditoRepository.delete(cartaoCredito);
+        CartaoCredito cartao = cartaoCreditoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cartão não encontrado com id " + id));
+
+        Cliente cliente = cartao.getCliente();
+        if (cliente == null) {
+            throw new IllegalStateException("Cartão não está associado a nenhum cliente");
+        }
+        cliente.removeCartaoCredito(cartao);
+        clienteRepository.save(cliente);
     }
 
 }

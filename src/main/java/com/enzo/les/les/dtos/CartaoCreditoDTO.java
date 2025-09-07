@@ -1,9 +1,10 @@
-package com.enzo.les.les.model.dtos;
+package com.enzo.les.les.dtos;
 
 import com.enzo.les.les.enums.BandeiraCartaoEnum;
 import com.enzo.les.les.model.entities.CartaoCredito;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -26,13 +27,12 @@ public class CartaoCreditoDTO {
     @Pattern(regexp = "\\d{3,4}", message = "Código de segurança deve ter 3 ou 4 dígitos")
     private String codigoSeguranca;
 
-    @NotBlank(message = "Bandeira do cartão não pode ser vazia")
-    private BandeiraCartaoEnum bandeira; // idealmente ENUM
+    @NotNull(message = "Bandeira do cartão não pode ser vazia")
+    private BandeiraCartaoEnum bandeira;
 
-    @NotBlank(message = "Cliente ID não pode ser vazio")
+    @NotNull(message = "Cliente ID não pode ser vazio")
     private Long clienteId;
 
-    // 🔹 Conversão para entidade CartaoCredito
     public CartaoCredito mapToEntity() {
         CartaoCredito cartao = new CartaoCredito();
         cartao.setId(this.id);

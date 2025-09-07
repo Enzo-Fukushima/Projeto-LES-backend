@@ -3,7 +3,7 @@ package com.enzo.les.les.model.entities;
 import com.enzo.les.les.enums.EstadoEnum;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
-import com.enzo.les.les.model.dtos.EnderecoDTO;
+import com.enzo.les.les.dtos.EnderecoDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -64,17 +64,16 @@ public class Endereco {
     }
 
     public void update(EnderecoDTO dto) {
-        dto.setBairro(this.getBairro());
-        dto.setCep(this.getCep());
-        dto.setClienteId(this.getCliente().getId());
-        dto.setEstado(this.getEstado());
-        dto.setLogradouro(this.getLogradouro());
-        dto.setCidade(this.getCidade());
-        dto.setTipoLogradouro(getTipoLogradouro());
-        dto.setTipoResidencia(this.getTipoResidencia());
-        dto.setNumero(this.getNumero());
-        dto.setPais(this.getPais());
-        dto.setObservacoes(this.getObservacoes());
+        this.setBairro(dto.getBairro());
+        this.setCep(dto.getCep());
+        this.setEstado(dto.getEstado());
+        this.setLogradouro(dto.getLogradouro());
+        this.setCidade(dto.getCidade());
+        this.setTipoLogradouro(dto.getTipoLogradouro());
+        this.setTipoResidencia(dto.getTipoResidencia());
+        this.setNumero(dto.getNumero());
+        this.setPais(dto.getPais());
+        this.setObservacoes(dto.getObservacoes());
     }
 
 }
