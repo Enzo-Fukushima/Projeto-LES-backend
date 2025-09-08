@@ -31,6 +31,14 @@ public class EnderecoService {
         return endereco.mapToDTO();
     }
 
+    public List<EnderecoDTO> buscarEnderecosDoUsuario(Long id){
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        return cliente.getEnderecos()
+                .stream()
+                .map(Endereco::mapToDTO)
+                .toList();
+    }
+
     // READ - buscar por id
     public EnderecoDTO buscarPorId(Long id) {
         Endereco endereco = enderecoRepository.findById(id)

@@ -33,6 +33,11 @@ public class CartaoCreditoService {
         return cartao.mapToDTO();
     }
 
+    public List<CartaoCreditoDTO> buscarCartoesPorCliente(Long id){
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        return cliente.getCartoes().stream().map(CartaoCredito::mapToDTO).toList();
+    }
+
     public CartaoCreditoDTO buscarPorId(Long id) {
         CartaoCredito cartao = cartaoCreditoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
