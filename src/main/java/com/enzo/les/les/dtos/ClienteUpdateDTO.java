@@ -1,7 +1,6 @@
 package com.enzo.les.les.dtos;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.enzo.les.les.enums.TipoTelefoneEnum;
 import com.enzo.les.les.model.entities.Cliente;
@@ -11,11 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.validation.Valid;
 import lombok.Data;
 
 @Data
-public class ClienteDetalhadoDTO {
+public class ClienteUpdateDTO {
     private Long id;
 
     @NotBlank(message = "Nome não pode ser vazio")
@@ -39,6 +37,10 @@ public class ClienteDetalhadoDTO {
     @Size(max = 255, message = "Email deve ter no máximo 255 caracteres")
     private String email;
 
+    @Size(min = 8, max = 255, message = "Senha deve ter entre 8 e 255 caracteres")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "Senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial")
+    private String senha;
 
     @NotBlank(message = "Tipo de telefone não pode ser vazio")
     @Pattern(regexp = "^(RESIDENCIAL|CELULAR|COMERCIAL)$", message = "Tipo de telefone deve ser RESIDENCIAL, CELULAR ou COMERCIAL")
@@ -55,12 +57,6 @@ public class ClienteDetalhadoDTO {
     private boolean ativo = true;
     private Integer ranking = 0;
 
-    @Valid
-    private List<EnderecoDTO> enderecos;
-
-    @Valid
-    private List<CartaoCreditoDTO> cartoes;
-
     public Cliente mapToEntity() {
         Cliente cliente = new Cliente();
         cliente.setId(this.id);
@@ -69,6 +65,7 @@ public class ClienteDetalhadoDTO {
         cliente.setGenero(this.genero);
         cliente.setDataNascimento(this.dataNascimento);
         cliente.setEmail(this.email);
+        cliente.setSenha(this.senha);
         cliente.setTipoTelefone(TipoTelefoneEnum.valueOf(this.tipoTelefone));
         cliente.setDdd(this.ddd);
         cliente.setNumeroTelefone(this.numeroTelefone);

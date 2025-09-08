@@ -71,8 +71,8 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteDetalhadoDTO> updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteDetalhadoDTO dto) {
-        ClienteDetalhadoDTO existing = clienteService.atualizar(id, dto);
+    public ResponseEntity<ClienteUpdateDTO> updateCliente(@PathVariable Long id, @Valid @RequestBody ClienteUpdateDTO dto) {
+        ClienteUpdateDTO existing = clienteService.atualizar(id, dto);
         return ResponseEntity.ok(existing);
     }
 
@@ -83,7 +83,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PutMapping("/{id}/senha")
-    public ResponseEntity<ClienteDetalhadoDTO> updateClienteSenha(@PathVariable Long id, @Valid @RequestBody ClienteDetalhadoDTO dto) {
+    public ResponseEntity<ClienteDetalhadoDTO> updateClienteSenha(@PathVariable Long id, @Valid @RequestBody ClienteUpdateSenhaDTO dto) {
         ClienteDetalhadoDTO existing = clienteService.alterarSenha(id, dto);
         return ResponseEntity.ok(existing);
     }

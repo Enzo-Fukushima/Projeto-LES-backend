@@ -4,11 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enzo.les.les.dtos.ClienteDTO;
+import com.enzo.les.les.dtos.*;
 import com.enzo.les.les.enums.TipoTelefoneEnum;
-import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
-import com.enzo.les.les.dtos.EnderecoDTO;
-import com.enzo.les.les.dtos.CartaoCreditoDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -84,7 +81,6 @@ public class Cliente {
         dto.setGenero(this.genero);
         dto.setDataNascimento(this.dataNascimento);
         dto.setEmail(this.email);
-        dto.setSenha(this.senha);
         dto.setTipoTelefone(this.tipoTelefone.name());
         dto.setDdd(this.ddd);
         dto.setNumeroTelefone(this.numeroTelefone);
@@ -108,6 +104,23 @@ public class Cliente {
         return dto;
     }
 
+    public ClienteUpdateDTO mapToUpdateDTO(){
+        ClienteUpdateDTO dto = new ClienteUpdateDTO();
+        dto.setId(this.id);
+        dto.setNome(this.nome);
+        dto.setCpf(this.cpf);
+        dto.setGenero(this.genero);
+        dto.setDataNascimento(this.dataNascimento);
+        dto.setEmail(this.email);
+        dto.setSenha(this.senha);
+        dto.setTipoTelefone(this.tipoTelefone.name());
+        dto.setDdd(this.ddd);
+        dto.setNumeroTelefone(this.numeroTelefone);
+        dto.setAtivo(this.ativo);
+        dto.setRanking(this.ranking);
+        return dto;
+    }
+
     public ClienteDTO mapToDTOSimples() {
         ClienteDTO dto = new ClienteDTO();
         dto.setId(this.id);
@@ -124,22 +137,20 @@ public class Cliente {
         return dto;
     }
 
-    public void update(ClienteDetalhadoDTO dto) {
+    public void update(ClienteUpdateDTO dto) {
         this.nome = dto.getNome();
         this.cpf = dto.getCpf();
         this.genero = dto.getGenero();
         this.dataNascimento = dto.getDataNascimento();
         this.email = dto.getEmail();
-        this.senha = dto.getSenha();
+        if (dto.getSenha() != null) {
+            this.setSenha(dto.getSenha());
+        }
         this.tipoTelefone = TipoTelefoneEnum.valueOf(dto.getTipoTelefone());
         this.ddd = dto.getDdd();
         this.numeroTelefone = dto.getNumeroTelefone();
         this.ativo = dto.isAtivo();
         this.ranking = dto.getRanking();
-    }
-
-    public void updateSenha(ClienteDetalhadoDTO dto){
-        this.senha = dto.getSenha();
     }
     public void addEndereco(Endereco endereco) {
         if (this.enderecos == null) {

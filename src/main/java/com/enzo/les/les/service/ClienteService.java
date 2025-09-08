@@ -3,14 +3,11 @@ package com.enzo.les.les.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.enzo.les.les.dtos.ClienteDTO;
-import com.enzo.les.les.dtos.CreateClienteDTO;
-import com.enzo.les.les.dtos.CreateClienteEnderecoDTO;
+import com.enzo.les.les.dtos.*;
 import com.enzo.les.les.model.entities.Endereco;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
 import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.repository.ClienteRepository;
 
@@ -31,17 +28,19 @@ public class ClienteService {
             throw new IllegalArgumentException("CPF já cadastrado.");
         }
 
-        // Converte DTO para Entity
         Cliente cliente = clienteDTO.mapToEntity();
-        if(clienteDTO.getEnderecos() != null){
-            for(CreateClienteEnderecoDTO endDTO : clienteDTO.getEnderecos()){
+
+        cliente.setSenha(cliente.getSenha());
+
+        if (clienteDTO.getEnderecos() != null) {
+            for (CreateClienteEnderecoDTO endDTO : clienteDTO.getEnderecos()) {
                 Endereco endereco = endDTO.mapToEntity();
                 cliente.addEndereco(endereco);
             }
         }
+
         Cliente salvo = clienteRepository.save(cliente);
 
-        // Retorna DTO
         return salvo.mapToDTODetalhado();
     }
 
@@ -61,13 +60,13 @@ public class ClienteService {
     }
 
     // UPDATE
-    public ClienteDetalhadoDTO atualizar(Long id, ClienteDetalhadoDTO clienteDTO) {
-        Cliente clienteExistente = clienteRepository.findById(clienteDTO.getId())
+    public ClienteUpdateDTO atualizar(Long id, ClienteUpdateDTO dto) {
+        Cliente clienteExistente = clienteRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
 
-        clienteExistente.update(clienteDTO);
+        clienteExistente.update(dto);
         clienteRepository.save(clienteExistente);
-        return clienteExistente.mapToDTODetalhado();
+        return clienteExistente.mapToUpdateDTO();
     }
 
     // DELETE lógico (inativar)
@@ -85,9 +84,26 @@ public class ClienteService {
         clienteRepository.save(cliente);
     }
 
-    public ClienteDetalhadoDTO alterarSenha(Long id, ClienteDetalhadoDTO dto){
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
-        cliente.updateSenha(dto);
+    public ClienteDetalhadoDTO alterarSenha(Long id, ClienteUpdateSenhaDTO dto) {
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+
+
+        if (!dto.getSenhaAtual().equals(cliente.getSenha())) {
+            throw new IllegalArgumentException("Senha atual incorreta");
+        }
+
+
+        if (!dto.getNovaSenha().equals(dto.getConfirmaSenha())) {
+            throw new IllegalArgumentException("Nova senha e confirmação não coincidem");
+        }
+
+        // 3️⃣ Atualiza a senha sem hash
+        cliente.setSenha(dto.getNovaSenha());
+
+        clienteRepository.save(cliente);
         return cliente.mapToDTODetalhado();
     }
+
+
 }
