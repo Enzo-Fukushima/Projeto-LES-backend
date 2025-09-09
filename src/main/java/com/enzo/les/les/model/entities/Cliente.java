@@ -4,7 +4,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.enzo.les.les.dtos.*;
+import com.enzo.les.les.dtos.EnderecoDTO;
+import com.enzo.les.les.dtos.CartaoCreditoDTO;
+import com.enzo.les.les.dtos.ClienteDTO;
+import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
+import com.enzo.les.les.dtos.ClienteUpdateDTO;
 import com.enzo.les.les.enums.TipoTelefoneEnum;
 
 import jakarta.persistence.CascadeType;

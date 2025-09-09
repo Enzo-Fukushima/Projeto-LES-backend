@@ -25,6 +25,7 @@ public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String apelido;
     @Enumerated(EnumType.STRING)
     private TipoResidenciaEnum tipoResidencia;
     @Enumerated(EnumType.STRING)
@@ -50,6 +51,7 @@ public class Endereco {
     public EnderecoDTO mapToDTO() {
         EnderecoDTO dto = new EnderecoDTO();
         dto.setId(this.id);
+        dto.setApelido(this.apelido);
         dto.setTipoResidencia(this.tipoResidencia);
         dto.setTipoLogradouro(this.tipoLogradouro);
         dto.setLogradouro(this.logradouro);
@@ -67,6 +69,7 @@ public class Endereco {
     }
 
     public void update(EnderecoDTO dto) {
+        this.setApelido(dto.getApelido());
         this.setBairro(dto.getBairro());
         this.setCep(dto.getCep());
         this.setEstado(dto.getEstado());

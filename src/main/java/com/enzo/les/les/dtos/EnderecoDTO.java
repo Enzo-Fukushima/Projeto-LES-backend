@@ -21,6 +21,9 @@ public class EnderecoDTO {
 
     private TipoEnderecoEnum tipoEndereco;
 
+    @NotBlank(message = "Apelido não pode ser vazio")
+    private String apelido;
+
     @NotBlank(message = "Logradouro não pode ser vazio")
     private String logradouro;
     
@@ -51,6 +54,7 @@ public class EnderecoDTO {
     public Endereco mapToEntity() {
         Endereco endereco = new Endereco();
         endereco.setId(this.id);
+        endereco.setApelido(this.apelido);
         endereco.setTipoResidencia(this.tipoResidencia);
         endereco.setTipoLogradouro(this.tipoLogradouro);
         endereco.setLogradouro(this.logradouro);
