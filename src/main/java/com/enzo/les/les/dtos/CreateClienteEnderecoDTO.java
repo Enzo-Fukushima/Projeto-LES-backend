@@ -5,29 +5,39 @@ import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
 public class CreateClienteEnderecoDTO {
     private Long id;
 
+    @NotBlank(message = "Apelido não pode ser vazio")
+    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Apelido deve conter apenas letras e espaços")
+    private String apelido;
+
+    @NotBlank(message = "Tipo de residência não pode ser vazio")
     private TipoResidenciaEnum tipoResidencia;
 
+    @NotBlank(message = "Tipo de logradouro não pode ser vazio")
     private TipoLogradouroEnum tipoLogradouro;
 
     @NotBlank(message = "Logradouro não pode ser vazio")
+    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Logradouro deve conter apenas letras e espaços")
     private String logradouro;
 
     @NotNull(message = "Número não pode ser vazio")
     private Integer numero;
 
     @NotBlank(message = "Bairro não pode ser vazio")
+    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Bairro deve conter apenas letras e espaços")
     private String bairro;
 
     @NotBlank(message = "CEP não pode ser vazio")
     private String cep;
 
     @NotBlank(message = "Cidade não pode ser vazio")
+    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Cidade deve conter apenas letras e espaços")
     private String cidade;
 
     private EstadoEnum estado;
@@ -43,6 +53,7 @@ public class CreateClienteEnderecoDTO {
     public Endereco mapToEntity() {
         Endereco endereco = new Endereco();
         endereco.setId(this.id);
+        endereco.setApelido(this.apelido);
         endereco.setTipoResidencia(this.tipoResidencia);
         endereco.setTipoLogradouro(this.tipoLogradouro);
         endereco.setLogradouro(this.logradouro);
