@@ -17,10 +17,9 @@ public class CreateClienteEnderecoDTO {
     @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Apelido deve conter apenas letras e espaços")
     private String apelido;
 
-    @NotBlank(message = "Tipo de residência não pode ser vazio")
+
     private TipoResidenciaEnum tipoResidencia;
 
-    @NotBlank(message = "Tipo de logradouro não pode ser vazio")
     private TipoLogradouroEnum tipoLogradouro;
 
     private TipoEnderecoEnum tipoEndereco;
