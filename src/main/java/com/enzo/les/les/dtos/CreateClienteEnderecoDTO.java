@@ -52,7 +52,6 @@ public class CreateClienteEnderecoDTO {
         endereco.setCidade(this.cidade);
         endereco.setEstado(this.estado);
         endereco.setPais(this.pais);
-        endereco.setObservacoes(this.observacoes);
 
         return endereco;
     }

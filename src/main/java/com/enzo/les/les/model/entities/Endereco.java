@@ -39,7 +39,6 @@ public class Endereco {
     @Column(nullable = false, length = 2)
     private EstadoEnum estado;
     private String pais;
-    private String observacoes;
     @Enumerated(EnumType.STRING)
     private TipoEnderecoEnum tipoEndereco;
 
@@ -61,7 +60,6 @@ public class Endereco {
         dto.setCidade(this.cidade);
         dto.setEstado(this.estado);
         dto.setPais(this.pais);
-        dto.setObservacoes(this.observacoes);
         if (this.cliente != null) {
             dto.setClienteId(this.cliente.getId());
         }
@@ -79,7 +77,6 @@ public class Endereco {
         this.setTipoResidencia(dto.getTipoResidencia());
         this.setNumero(dto.getNumero());
         this.setPais(dto.getPais());
-        this.setObservacoes(dto.getObservacoes());
     }
 
 }

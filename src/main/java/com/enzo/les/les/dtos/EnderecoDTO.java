@@ -15,10 +15,13 @@ import lombok.Data;
 public class EnderecoDTO {
     private Long id;
 
+    @NotNull(message = "Tipo de residência não pode ser vazio")
     private TipoResidenciaEnum tipoResidencia;
 
+    @NotNull(message = "Tipo de logradouro não pode ser vazio")
     private TipoLogradouroEnum tipoLogradouro;
 
+    @NotNull(message = "Tipo de endereço não pode ser vazio")
     private TipoEnderecoEnum tipoEndereco;
 
     @NotBlank(message = "Apelido não pode ser vazio")
@@ -39,13 +42,11 @@ public class EnderecoDTO {
     @NotBlank(message = "Cidade não pode ser vazio")
     private String cidade;
     
+    @NotNull(message = "Estado não pode ser vazio")
     private EstadoEnum estado; 
     
     @NotBlank(message = "País não pode ser vazio")
     private String pais;
-    
-    @NotBlank(message = "Observações não pode ser vazio")
-    private String observacoes;
     
     @NotNull(message = "Cliente ID não pode ser vazio")
     private Long clienteId;
@@ -64,7 +65,6 @@ public class EnderecoDTO {
         endereco.setCidade(this.cidade);
         endereco.setEstado(this.estado);
         endereco.setPais(this.pais);
-        endereco.setObservacoes(this.observacoes);
 
         return endereco;
     } 
