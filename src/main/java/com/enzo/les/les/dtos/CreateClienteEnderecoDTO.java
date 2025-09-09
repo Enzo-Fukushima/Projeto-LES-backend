@@ -47,8 +47,6 @@ public class CreateClienteEnderecoDTO {
     @NotBlank(message = "País não pode ser vazio")
     private String pais;
 
-    @NotBlank(message = "Observações não pode ser vazio")
-    private String observacoes;
 
 
     // 🔹 Conversão para entidade Endereco
