@@ -1,13 +1,11 @@
 package com.enzo.les.les.dtos;
 
-import java.time.LocalDate;
 
 import com.enzo.les.les.enums.TipoTelefoneEnum;
 import com.enzo.les.les.model.entities.Cliente;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -24,13 +22,6 @@ public class ClienteUpdateDTO {
     @NotBlank(message = "CPF não pode ser vazio")
     @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
     private String cpf;
-
-    @NotBlank(message = "Gênero não pode ser vazio")
-    @Pattern(regexp = "^(MASCULINO|FEMININO|OUTRO)$", message = "Gênero deve ser MASCULINO, FEMININO ou OUTRO")
-    private String genero;
-
-    @NotNull(message = "Data de nascimento não pode ser nula")
-    private LocalDate dataNascimento;
 
     @NotBlank(message = "Email não pode ser vazio")
     @Email(message = "Email deve ser válido")
@@ -62,8 +53,6 @@ public class ClienteUpdateDTO {
         cliente.setId(this.id);
         cliente.setNome(this.nome);
         cliente.setCpf(this.cpf);
-        cliente.setGenero(this.genero);
-        cliente.setDataNascimento(this.dataNascimento);
         cliente.setEmail(this.email);
         cliente.setSenha(this.senha);
         cliente.setTipoTelefone(TipoTelefoneEnum.valueOf(this.tipoTelefone));

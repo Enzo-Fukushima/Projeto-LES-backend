@@ -109,8 +109,6 @@ public class Cliente {
         dto.setId(this.id);
         dto.setNome(this.nome);
         dto.setCpf(this.cpf);
-        dto.setGenero(this.genero);
-        dto.setDataNascimento(this.dataNascimento);
         dto.setEmail(this.email);
         dto.setSenha(this.senha);
         dto.setTipoTelefone(this.tipoTelefone.name());
@@ -140,8 +138,6 @@ public class Cliente {
     public void update(ClienteUpdateDTO dto) {
         this.nome = dto.getNome();
         this.cpf = dto.getCpf();
-        this.genero = dto.getGenero();
-        this.dataNascimento = dto.getDataNascimento();
         this.email = dto.getEmail();
         if (dto.getSenha() != null) {
             this.setSenha(dto.getSenha());

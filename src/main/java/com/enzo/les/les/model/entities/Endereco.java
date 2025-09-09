@@ -1,6 +1,7 @@
 package com.enzo.les.les.model.entities;
 
 import com.enzo.les.les.enums.EstadoEnum;
+import com.enzo.les.les.enums.TipoEnderecoEnum;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
 import com.enzo.les.les.dtos.EnderecoDTO;
@@ -24,7 +25,6 @@ public class Endereco {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Enumerated(EnumType.STRING)
     private TipoResidenciaEnum tipoResidencia;
     @Enumerated(EnumType.STRING)
@@ -39,6 +39,9 @@ public class Endereco {
     private EstadoEnum estado;
     private String pais;
     private String observacoes;
+    @Enumerated(EnumType.STRING)
+    private TipoEnderecoEnum tipoEndereco;
+
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)

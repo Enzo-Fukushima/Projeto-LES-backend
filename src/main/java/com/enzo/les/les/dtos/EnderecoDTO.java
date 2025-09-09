@@ -2,6 +2,7 @@ package com.enzo.les.les.dtos;
 
 
 import com.enzo.les.les.enums.EstadoEnum;
+import com.enzo.les.les.enums.TipoEnderecoEnum;
 import com.enzo.les.les.model.entities.Endereco;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
@@ -17,6 +18,8 @@ public class EnderecoDTO {
     private TipoResidenciaEnum tipoResidencia;
 
     private TipoLogradouroEnum tipoLogradouro;
+
+    private TipoEnderecoEnum tipoEndereco;
 
     @NotBlank(message = "Logradouro não pode ser vazio")
     private String logradouro;
