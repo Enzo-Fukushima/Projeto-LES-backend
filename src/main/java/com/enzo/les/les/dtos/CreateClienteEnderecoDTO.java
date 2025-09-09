@@ -3,6 +3,7 @@ import com.enzo.les.les.enums.EstadoEnum;
 import com.enzo.les.les.model.entities.Endereco;
 import com.enzo.les.les.enums.TipoLogradouroEnum;
 import com.enzo.les.les.enums.TipoResidenciaEnum;
+import com.enzo.les.les.enums.TipoEnderecoEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -21,6 +22,8 @@ public class CreateClienteEnderecoDTO {
 
     @NotBlank(message = "Tipo de logradouro não pode ser vazio")
     private TipoLogradouroEnum tipoLogradouro;
+
+    private TipoEnderecoEnum tipoEndereco;
 
     @NotBlank(message = "Logradouro não pode ser vazio")
     @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$", message = "Logradouro deve conter apenas letras e espaços")
@@ -56,6 +59,7 @@ public class CreateClienteEnderecoDTO {
         endereco.setApelido(this.apelido);
         endereco.setTipoResidencia(this.tipoResidencia);
         endereco.setTipoLogradouro(this.tipoLogradouro);
+        endereco.setTipoEndereco(this.tipoEndereco);
         endereco.setLogradouro(this.logradouro);
         endereco.setNumero(this.numero);
         endereco.setBairro(this.bairro);
