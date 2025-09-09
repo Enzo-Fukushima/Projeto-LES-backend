@@ -58,6 +58,7 @@ public class EnderecoDTO {
         endereco.setApelido(this.apelido);
         endereco.setTipoResidencia(this.tipoResidencia);
         endereco.setTipoLogradouro(this.tipoLogradouro);
+        endereco.setTipoEndereco(this.tipoEndereco);
         endereco.setLogradouro(this.logradouro);
         endereco.setNumero(this.numero);
         endereco.setBairro(this.bairro);
