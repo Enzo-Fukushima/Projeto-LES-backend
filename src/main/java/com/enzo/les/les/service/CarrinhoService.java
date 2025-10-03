@@ -2,7 +2,7 @@ package com.enzo.les.les.service;
 
 import com.enzo.les.les.dtos.CarrinhoDTO;
 import com.enzo.les.les.dtos.CarrinhoUpdateItemDTO;
-import com.enzo.les.les.dtos.ItemCarrinhoDTO;
+import com.enzo.les.les.dtos.CarrinhoItemDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +12,7 @@ public class CarrinhoService {
         return new CarrinhoDTO();
     }
 
-    public CarrinhoDTO adicionarItem(Long carrinhoId, ItemCarrinhoDTO dto) {
+    public CarrinhoDTO adicionarItem(Long carrinhoId, CarrinhoItemDTO dto) {
         // TODO: Adicionar item ao carrinho no banco
         return new CarrinhoDTO();
     }

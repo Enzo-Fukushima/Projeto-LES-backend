@@ -22,7 +22,7 @@ public class CheckoutRequestDTO {
     private EnderecoDTO novoEnderecoEntrega;
 
     // Formas de pagamento (muitos cartões e/ou cupons)
-    private List<PagamentoCartaoDTO> cartoesPagamento;
+    private List<CartaoPagamentoDTO> cartoesPagamento;
 
     // Cupons promocionais / de troca
     private List<CupomUseDTO> cupons;

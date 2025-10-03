@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ItemCarrinhoDTO {
+public class CarrinhoItemDTO {
 
     // ID do item no carrinho (opcional em inserção)
     private Long id;

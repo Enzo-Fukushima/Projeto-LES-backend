@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 public class CarrinhoDTO {
     private Long id;
     private Long clienteId;
-    private List<ItemCarrinhoDTO> itens;
+    private List<CarrinhoItemDTO> itens;
 }
