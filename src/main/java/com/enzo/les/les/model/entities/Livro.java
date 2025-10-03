@@ -39,17 +39,12 @@ public class Livro {
     @JoinColumn(name = "grupo_precificacao_id")
     private GrupoPrecificacao grupoPrecificacao;
 
+    @Column(nullable = false, length = 50)
+    private String Autor;
+
     @ManyToOne
     @JoinColumn(name = "editora_id")
     private Editora editora;
-
-    @ManyToMany
-    @JoinTable(
-        name = "livro_autor",
-        joinColumns = @JoinColumn(name = "livro_id"),
-        inverseJoinColumns = @JoinColumn(name = "autor_id")
-    )
-    private Set<Autor> autores;
 
     @ManyToMany
     @JoinTable(

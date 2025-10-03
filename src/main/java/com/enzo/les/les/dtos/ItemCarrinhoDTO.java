@@ -1,0 +1,21 @@
+package com.enzo.les.les.dtos;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ItemCarrinhoDTO {
+
+    // ID do item no carrinho (opcional em inserção)
+    private Long id;
+
+    @NotNull
+    private Long livroId;
+
+    @Min(1)
+    private Integer quantidade;
+}
