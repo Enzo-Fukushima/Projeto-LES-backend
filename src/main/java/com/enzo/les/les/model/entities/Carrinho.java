@@ -1,5 +1,6 @@
 package com.enzo.les.les.model.entities;
 
+import com.enzo.les.les.dtos.CarrinhoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -24,4 +25,12 @@ public class Carrinho {
     // Itens do carrinho
     @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CarrinhoItem> itens;
+
+    public CarrinhoDTO mapToDTO(){
+        CarrinhoDTO dto = new CarrinhoDTO();
+        dto.setId(this.id);
+        dto.setClienteId(this.cliente.getId());
+        dto.setItens(this.itens.stream().map(CarrinhoItem::mapToDTO).toList());
+        return dto;
+    }
 }
