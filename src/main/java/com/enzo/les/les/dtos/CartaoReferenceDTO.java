@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CardReferenceDTO {
+public class CartaoReferenceDTO {
     @NotNull
     private Long cartaoId;
 }

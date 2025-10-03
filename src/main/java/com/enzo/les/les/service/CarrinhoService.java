@@ -3,25 +3,14 @@ package com.enzo.les.les.service;
 import com.enzo.les.les.dtos.CarrinhoDTO;
 import com.enzo.les.les.dtos.CarrinhoUpdateItemDTO;
 import com.enzo.les.les.dtos.ItemCarrinhoDTO;
-import com.enzo.les.les.model.entities.Carrinho;
-import com.enzo.les.les.repository.CarrinhoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class CarrinhoService {
+    public CarrinhoDTO buscarCarrinhoPorCliente(Long clienteId) {
 
-    @Autowired
-    CarrinhoRepository carrinhoRepository;
-
-    public Optional<CarrinhoDTO> buscarCarrinhoPorCliente(Long clienteId) {
-        Carrinho carrinho = carrinhoRepository.findByClienteId(clienteId);
-        return Optional.ofNullable(carrinho)
-                .map(Carrinho::mapToDTO);
+        return new CarrinhoDTO();
     }
-
 
     public CarrinhoDTO adicionarItem(Long carrinhoId, ItemCarrinhoDTO dto) {
         // TODO: Adicionar item ao carrinho no banco

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PagamentoCartaoDTO {
+public class CartaoPagamentoDTO {
     // Use um dos dois: cartaoId (cartão cadastrado) ou newCard (dados do cartão novo)
     private Long cartaoId;
     private NovoCardDTO newCard;
