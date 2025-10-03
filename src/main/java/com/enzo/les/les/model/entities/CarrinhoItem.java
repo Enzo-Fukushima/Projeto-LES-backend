@@ -1,7 +1,6 @@
 package com.enzo.les.les.model.entities;
 
-import com.enzo.les.les.dtos.CarrinhoUpdateItemDTO;
-import com.enzo.les.les.dtos.ItemCarrinhoDTO;
+import com.enzo.les.les.dtos.CarrinhoItemDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,8 +37,8 @@ public class CarrinhoItem {
 
     private Integer quantidade;
 
-    public ItemCarrinhoDTO mapToDTO(){
-        ItemCarrinhoDTO dto = new ItemCarrinhoDTO();
+    public CarrinhoItemDTO mapToDTO(){
+        CarrinhoItemDTO dto = new CarrinhoItemDTO();
         dto.setId(this.id);
         dto.setQuantidade(this.quantidade);
         dto.setLivroId(this.livro.getId());
