@@ -11,17 +11,7 @@ import com.enzo.les.les.dtos.ClienteDetalhadoDTO;
 import com.enzo.les.les.dtos.ClienteUpdateDTO;
 import com.enzo.les.les.enums.TipoTelefoneEnum;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -76,6 +66,12 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<CartaoCredito> cartoes = new ArrayList<>();
+
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Carrinho carrinho;
+
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Pedido> pedidos = new ArrayList<>();
 
     public ClienteDetalhadoDTO mapToDTODetalhado() {
         ClienteDetalhadoDTO dto = new ClienteDetalhadoDTO();
@@ -181,4 +177,27 @@ public class Cliente {
             cartao.setCliente(null);
         }
     }
+
+    public void setCarrinho(Carrinho carrinho) {
+        this.carrinho = carrinho;
+        if (carrinho != null) {
+            carrinho.setCliente(this);
+        }
+    }
+
+    public void addPedido(Pedido pedido) {
+        if (this.pedidos == null) {
+            this.pedidos = new ArrayList<>();
+        }
+        this.pedidos.add(pedido);
+        pedido.setCliente(this);
+    }
+
+    public void removePedido(Pedido pedido) {
+        if (this.pedidos != null) {
+            this.pedidos.remove(pedido);
+            pedido.setCliente(null);
+        }
+    }
+
 }
