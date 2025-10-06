@@ -18,4 +18,7 @@ public class CarrinhoItemDTO {
 
     @Min(1)
     private Integer quantidade;
+
+    @NotNull(message = "O ID do cliente é obrigatório para criar o carrinho")
+    private Long clienteId;
 }

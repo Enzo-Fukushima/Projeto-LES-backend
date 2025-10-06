@@ -3,87 +3,139 @@ package com.enzo.les.les.service;
 import com.enzo.les.les.dtos.CarrinhoDTO;
 import com.enzo.les.les.dtos.CarrinhoItemDTO;
 import com.enzo.les.les.dtos.CarrinhoUpdateItemDTO;
+import com.enzo.les.les.exceptions.BusinessException;
+import com.enzo.les.les.exceptions.ResourceNotFoundException;
 import com.enzo.les.les.model.entities.Carrinho;
 import com.enzo.les.les.model.entities.CarrinhoItem;
+import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.model.entities.Livro;
 import com.enzo.les.les.repository.CarrinhoRepository;
+import com.enzo.les.les.repository.ClienteRepository;
 import com.enzo.les.les.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 public class CarrinhoService {
-    @Autowired
-    CarrinhoRepository carrinhoRepository;
 
     @Autowired
-    LivroRepository livroRepository;
+    private ClienteRepository clienteRepository;
 
+    @Autowired
+    private CarrinhoRepository carrinhoRepository;
+
+    @Autowired
+    private LivroRepository livroRepository;
+
+    /**
+     * Buscar o carrinho de um cliente pelo ID
+     */
+    @Transactional
     public Optional<CarrinhoDTO> buscarCarrinhoPorCliente(Long clienteId) {
+        // Busca o carrinho existente
         Carrinho carrinho = carrinhoRepository.findByClienteId(clienteId);
-        return Optional.ofNullable(carrinho)
-                .map(Carrinho::mapToDTO);
+
+        if (carrinho == null) {
+            // Cria apenas se realmente não existir
+            Cliente cliente = clienteRepository.findById(clienteId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado: " + clienteId));
+
+            carrinho = new Carrinho();
+            carrinho.setCliente(cliente);
+            carrinho = carrinhoRepository.save(carrinho);
+        }
+
+        return Optional.of(carrinho.mapToDTO());
     }
 
+
+    /**
+     * Adiciona item ao carrinho — cria o carrinho se ainda não existir
+     */
+    @Transactional
     public CarrinhoDTO adicionarItem(Long carrinhoId, CarrinhoItemDTO dto) {
-        // 1. Buscar o carrinho
-        Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
-                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+        Carrinho carrinho;
 
-        // 2. Buscar o produto
-        Livro livro = livroRepository.findById(dto.getLivroId())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-
-        // 3. Verificar se o item já existe no carrinho
-        Optional<CarrinhoItem> itemExistente = carrinho.getItens().stream()
-                .filter(i -> i.getLivro().getId().equals(livro.getId()))
-                .findFirst();
-
-        if (itemExistente.isPresent()) {
-            // Se já existe, só aumenta a quantidade
-            CarrinhoItem item = itemExistente.get();
-            item.setQuantidade(item.getQuantidade() + dto.getQuantidade());
+        if (carrinhoId != null) {
+            carrinho = carrinhoRepository.findById(carrinhoId).orElse(null);
+        } else if (dto.getClienteId() != null) {
+            carrinho = carrinhoRepository.findByClienteId(dto.getClienteId());
         } else {
-            // Se não existe, cria um novo item
+            throw new BusinessException("Carrinho ou cliente não informado");
+        }
+
+        if (carrinho == null) {
+            Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado: " + dto.getClienteId()));
+
+            carrinho = new Carrinho();
+            carrinho.setCliente(cliente);
+            carrinho = carrinhoRepository.save(carrinho);
+        }
+
+        // Adicionar item normalmente...
+        Livro livro = livroRepository.findById(dto.getLivroId())
+                .orElseThrow(() -> new ResourceNotFoundException("Livro não encontrado: " + dto.getLivroId()));
+
+        CarrinhoItem itemExistente = carrinho.getItens().stream()
+                .filter(i -> i.getLivro().getId().equals(dto.getLivroId()))
+                .findFirst()
+                .orElse(null);
+
+        if (itemExistente != null) {
+            itemExistente.setQuantidade(itemExistente.getQuantidade() + dto.getQuantidade());
+        } else {
             CarrinhoItem novoItem = new CarrinhoItem();
+            novoItem.setCarrinho(carrinho);
             novoItem.setLivro(livro);
             novoItem.setQuantidade(dto.getQuantidade());
-            novoItem.setCarrinho(carrinho);
-
             carrinho.getItens().add(novoItem);
         }
 
-        // 4. Salvar o carrinho atualizado
-        carrinhoRepository.save(carrinho);
-
-        // 5. Retornar DTO
+        carrinho = carrinhoRepository.save(carrinho);
         return carrinho.mapToDTO();
     }
 
+    /**
+     * Remove um item do carrinho
+     */
     public CarrinhoDTO removerItem(Long carrinhoId, Long livroId) {
         Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
-                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Carrinho não encontrado"));
 
         CarrinhoItem item = carrinho.getItens().stream()
                 .filter(i -> i.getLivro().getId().equals(livroId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Item não encontrado no carrinho"));
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado no carrinho"));
 
         carrinho.getItens().remove(item);
         carrinhoRepository.save(carrinho);
+
         return carrinho.mapToDTO();
     }
 
-    public CarrinhoDTO atualizarQuantidade(Long carrinhoId, CarrinhoUpdateItemDTO dto){
+    /**
+     * Atualiza a quantidade de um item
+     */
+    public CarrinhoDTO atualizarQuantidade(Long carrinhoId, CarrinhoUpdateItemDTO dto) {
         Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
-                .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
-        CarrinhoItem item = carrinho.getItens().stream().filter(i -> i.getLivro().getId().equals(dto.getLivroId())).findFirst().orElseThrow(()-> new RuntimeException("Item não encontrado"));
-        if(dto.getQuantidade() <= 0) throw new IllegalArgumentException("A quantidade mínima é 1 produto");
+                .orElseThrow(() -> new ResourceNotFoundException("Carrinho não encontrado"));
+
+        CarrinhoItem item = carrinho.getItens().stream()
+                .filter(i -> i.getLivro().getId().equals(dto.getLivroId()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Item não encontrado no carrinho"));
+
+        if (dto.getQuantidade() <= 0) {
+            throw new BusinessException("A quantidade mínima é 1 produto");
+        }
 
         item.setQuantidade(dto.getQuantidade());
         carrinhoRepository.save(carrinho);
+
         return carrinho.mapToDTO();
     }
 }

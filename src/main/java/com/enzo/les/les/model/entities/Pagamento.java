@@ -26,6 +26,7 @@ public class Pagamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     // Relacionamento com Pedido
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
@@ -38,6 +39,8 @@ public class Pagamento {
     @Column(name = "parcelas")
     private Integer parcelas;
 
+    @ManyToOne(optional = false) // ✅ Um cliente pode ter vários pagamentos com o mesmo cartão
+    @JoinColumn(name = "cartao_id", nullable = false)
     private CartaoCredito cartao;
 
     private BigDecimal valor;
