@@ -1,5 +1,7 @@
 package com.enzo.les.les.dtos;
 
+import com.enzo.les.les.enums.TipoCupomEnum;
+import com.enzo.les.les.model.entities.Cupom;
 import lombok.*;
 
 @Data
@@ -11,4 +13,12 @@ public class CupomUseDTO {
     private Long cupomId;
     private String codigo;
     // valor aplicado (opcional - servidor pode calcular)
+    private TipoCupomEnum tipoCupom;
+
+    public CupomUseDTO(Cupom cupom) {
+        CupomUseDTO dto = new CupomUseDTO();
+        dto.setCupomId(cupom.getId());
+        dto.setTipoCupom(cupom.getTipoCupom());
+        dto.setCodigo(cupom.getCodigo());
+    }
 }

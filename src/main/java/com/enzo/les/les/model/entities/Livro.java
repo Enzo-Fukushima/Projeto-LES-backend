@@ -39,8 +39,10 @@ public class Livro {
     @JoinColumn(name = "grupo_precificacao_id")
     private GrupoPrecificacao grupoPrecificacao;
 
+    private Double preco;
+
     @Column(nullable = false, length = 50)
-    private String Autor;
+    private String autor;
 
     @ManyToOne
     @JoinColumn(name = "editora_id")

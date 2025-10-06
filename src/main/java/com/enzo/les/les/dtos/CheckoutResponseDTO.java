@@ -12,4 +12,5 @@ public class CheckoutResponseDTO {
     private String status; // EX: ABERTO
     private BigDecimal valorTotal;
     private String mensagem;
+    private BigDecimal valorPago;
 }

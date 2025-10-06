@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CupomUsoRepository extends JpaRepository<CupomUso, Long> {
-
+    boolean existsByCupomIdAndClienteId(Long cupomId, Long clienteId);
 }

@@ -1,5 +1,4 @@
 package com.enzo.les.les.model.entities;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "pagamentos")
@@ -34,5 +35,10 @@ public class Pagamento {
     @Column(length = 20)
     private String formaPagamento; // ex: CARTÃO, BOLETO
 
-    private Double valor;
+    @Column(name = "parcelas")
+    private Integer parcelas;
+
+    private CartaoCredito cartao;
+
+    private BigDecimal valor;
 }

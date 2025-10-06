@@ -12,6 +12,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "pedido_itens")
 @Data
@@ -34,5 +36,9 @@ public class PedidoItem {
     @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
+    private BigDecimal precoUnitario;
+
     private Integer quantidade;
+
+    private BigDecimal subtotal;
 }

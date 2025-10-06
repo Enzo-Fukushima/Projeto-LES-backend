@@ -16,10 +16,11 @@ import lombok.NoArgsConstructor;
 public class CartaoPagamentoDTO {
     // Use um dos dois: cartaoId (cartão cadastrado) ou newCard (dados do cartão novo)
     private Long cartaoId;
-    private NovoCardDTO newCard;
+    private CartaoCreditoDTO newCard;
+    private Integer parcelas;
 
     @NotNull
-    @DecimalMin(value = "0.01", inclusive = true)
+    @DecimalMin(value = "0.01")
     private BigDecimal valor; // quanto desse pagamento será coberto por este cartão
 
 }
