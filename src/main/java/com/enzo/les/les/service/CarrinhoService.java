@@ -62,12 +62,12 @@ public class CarrinhoService {
         return carrinho.mapToDTO();
     }
 
-    public CarrinhoDTO removerItem(Long carrinhoId, CarrinhoUpdateItemDTO dto) {
+    public CarrinhoDTO removerItem(Long carrinhoId, Long livroId) {
         Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
                 .orElseThrow(() -> new RuntimeException("Carrinho não encontrado"));
 
         CarrinhoItem item = carrinho.getItens().stream()
-                .filter(i -> i.getLivro().getId().equals(dto.getLivroId()))
+                .filter(i -> i.getLivro().getId().equals(livroId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Item não encontrado no carrinho"));
 

@@ -45,10 +45,9 @@ public class CarrinhoController {
         return ResponseEntity.ok(carrinhoService.atualizarQuantidade(carrinhoId, dto));
     }
 
-    @Operation(summary = "Remover item do carrinho")
-    @DeleteMapping("/{carrinhoId}/itens")
-    public ResponseEntity<CarrinhoDTO> removeItem(@PathVariable Long carrinhoId,@Valid @RequestBody CarrinhoUpdateItemDTO dto) {
-        return ResponseEntity.ok(carrinhoService.removerItem(carrinhoId, dto));
-}
+    @DeleteMapping("/{carrinhoId}/itens/{livroId}")
+    public ResponseEntity<CarrinhoDTO> removeItem(@PathVariable Long carrinhoId, @PathVariable Long livroId) {
+        return ResponseEntity.ok(carrinhoService.removerItem(carrinhoId, livroId));
+    }
 
 }
