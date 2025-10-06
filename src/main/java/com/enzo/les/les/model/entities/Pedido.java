@@ -1,16 +1,9 @@
 package com.enzo.les.les.model.entities;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,4 +34,26 @@ public class Pedido {
     // Itens do pedido
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoItem> itens;
+
+    @Column(nullable = false)
+    private String status;
+
+
+    @Column(name = "data_pedido", nullable = false)
+    private LocalDateTime dataPedido;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pagamento> pagamentos;
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CupomUso> cuponsUsados;
+
+    @PrePersist
+    public void prePersist() {
+        this.dataPedido = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "ABERTO";
+        }
+    }
+
 }

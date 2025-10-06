@@ -21,4 +21,5 @@ public class Cupom {
 
     @OneToMany(mappedBy = "cupom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CupomUso> usos;
+
 }
