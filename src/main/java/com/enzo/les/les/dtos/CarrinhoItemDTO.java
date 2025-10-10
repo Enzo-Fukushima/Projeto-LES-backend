@@ -13,12 +13,10 @@ public class CarrinhoItemDTO {
     // ID do item no carrinho (opcional em inserção)
     private Long id;
 
+    private Long clienteId;
     @NotNull
     private Long livroId;
 
     @Min(1)
     private Integer quantidade;
-
-    @NotNull(message = "O ID do cliente é obrigatório para criar o carrinho")
-    private Long clienteId;
 }

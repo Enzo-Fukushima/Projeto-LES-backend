@@ -33,9 +33,13 @@ public class CarrinhoController {
             .orElseGet(() -> ResponseEntity.notFound().build()); // 404 se não encontrado
     }
 
-    @Operation(summary = "Adicionar item ao carrinho")
+    @PostMapping("/cliente/{clienteId}")
+    public ResponseEntity<CarrinhoDTO> criarCarrinho(@PathVariable Long clienteId) {
+        return ResponseEntity.ok(carrinhoService.criarCarrinho(clienteId));
+    }
+
     @PostMapping("/{carrinhoId}/itens")
-    public ResponseEntity<CarrinhoDTO> addItem(@PathVariable Long carrinhoId, @Valid @RequestBody CarrinhoItemDTO dto) {
+    public ResponseEntity<CarrinhoDTO> adicionarItem(@PathVariable Long carrinhoId, @RequestBody @Valid CarrinhoItemDTO dto) {
         return ResponseEntity.ok(carrinhoService.adicionarItem(carrinhoId, dto));
     }
 

@@ -53,30 +53,36 @@ public class CarrinhoService {
 
 
     /**
-     * Adiciona item ao carrinho — cria o carrinho se ainda não existir
+     * Cria carrinho, se ainda não existir
+     */
+    @Transactional
+    public CarrinhoDTO criarCarrinho(Long clienteId) {
+        Cliente cliente = clienteRepository.findById(clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado: " + clienteId));
+
+        // Verifica se já existe
+        Carrinho existente = carrinhoRepository.findByClienteId(clienteId);
+        if (existente != null) {
+            return existente.mapToDTO();
+        }
+
+        Carrinho novo = new Carrinho();
+        novo.setCliente(cliente);
+        novo = carrinhoRepository.save(novo);
+
+        return novo.mapToDTO();
+    }
+
+
+
+    /**
+     * Adiciona item ao carrinho
      */
     @Transactional
     public CarrinhoDTO adicionarItem(Long carrinhoId, CarrinhoItemDTO dto) {
-        Carrinho carrinho;
+        Carrinho carrinho = carrinhoRepository.findById(carrinhoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrinho não encontrado: " + carrinhoId));
 
-        if (carrinhoId != null) {
-            carrinho = carrinhoRepository.findById(carrinhoId).orElse(null);
-        } else if (dto.getClienteId() != null) {
-            carrinho = carrinhoRepository.findByClienteId(dto.getClienteId());
-        } else {
-            throw new BusinessException("Carrinho ou cliente não informado");
-        }
-
-        if (carrinho == null) {
-            Cliente cliente = clienteRepository.findById(dto.getClienteId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado: " + dto.getClienteId()));
-
-            carrinho = new Carrinho();
-            carrinho.setCliente(cliente);
-            carrinho = carrinhoRepository.save(carrinho);
-        }
-
-        // Adicionar item normalmente...
         Livro livro = livroRepository.findById(dto.getLivroId())
                 .orElseThrow(() -> new ResourceNotFoundException("Livro não encontrado: " + dto.getLivroId()));
 

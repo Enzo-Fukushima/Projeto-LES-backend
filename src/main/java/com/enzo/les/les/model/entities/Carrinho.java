@@ -4,6 +4,7 @@ import com.enzo.les.les.dtos.CarrinhoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,7 +24,7 @@ public class Carrinho {
     private Cliente cliente;
 
     @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CarrinhoItem> itens;
+    private List<CarrinhoItem> itens = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "cupom_id")

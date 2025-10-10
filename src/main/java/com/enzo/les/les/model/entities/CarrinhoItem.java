@@ -8,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,9 +35,6 @@ public class CarrinhoItem {
     @JoinColumn(name = "livro_id", nullable = false)
     private Livro livro;
 
-    @NotNull
-    Long clienteId;
-
     private Integer quantidade;
 
     public CarrinhoItemDTO mapToDTO(){
@@ -46,7 +42,6 @@ public class CarrinhoItem {
         dto.setId(this.id);
         dto.setQuantidade(this.quantidade);
         dto.setLivroId(this.livro.getId());
-        dto.setClienteId(this.clienteId);
         return dto;
     }
 }
