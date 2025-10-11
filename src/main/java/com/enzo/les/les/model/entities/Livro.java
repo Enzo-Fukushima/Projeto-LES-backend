@@ -2,6 +2,7 @@ package com.enzo.les.les.model.entities;
 
 import java.util.Set;
 
+import com.enzo.les.les.dtos.LivroDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -55,4 +56,26 @@ public class Livro {
         inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     private Set<Categoria> categorias;
+
+
+    public LivroDTO mapToDTO(){
+        return LivroDTO.builder()
+                .id(this.id)
+                .codigo(this.codigo)
+                .titulo(this.titulo)
+                .preco(this.preco)
+                .autor(this.autor)
+                .grupoPrecificacaoId(this.grupoPrecificacao != null ? this.grupoPrecificacao.getId() : null)
+                .grupoPrecificacaoNome(this.grupoPrecificacao != null ? this.grupoPrecificacao.getNome() : null)
+                .editoraId(this.editora != null ? this.editora.getId() : null)
+                .editoraNome(this.editora != null ? this.editora.getNome() : null)
+                .categoriaIds(this.categorias != null
+                        ? this.categorias.stream().map(Categoria::getId).collect(java.util.stream.Collectors.toSet())
+                        : java.util.Collections.emptySet())
+                .categoriaNomes(this.categorias != null
+                        ? this.categorias.stream().map(Categoria::getNome).collect(java.util.stream.Collectors.toSet())
+                        : java.util.Collections.emptySet())
+                .build();
+        
+    }
 }

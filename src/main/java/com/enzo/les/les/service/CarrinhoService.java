@@ -22,13 +22,19 @@ import java.util.Optional;
 public class CarrinhoService {
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     @Autowired
-    private CarrinhoRepository carrinhoRepository;
+    private final CarrinhoRepository carrinhoRepository;
 
     @Autowired
-    private LivroRepository livroRepository;
+    private final LivroRepository livroRepository;
+
+    public CarrinhoService(ClienteRepository clienteRepository, CarrinhoRepository carrinhoRepository, LivroRepository livroRepository) {
+        this.clienteRepository = clienteRepository;
+        this.carrinhoRepository = carrinhoRepository;
+        this.livroRepository = livroRepository;
+    }
 
     /**
      * Buscar o carrinho de um cliente pelo ID
