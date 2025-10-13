@@ -57,6 +57,24 @@ public class CarrinhoService {
         return Optional.of(carrinho.mapToDTO());
     }
 
+    @Transactional
+    public CarrinhoDTO adicionarItemPorCliente(Long clienteId, CarrinhoItemDTO dto) {
+        // 1. Buscar carrinho do cliente
+        Carrinho carrinho = carrinhoRepository.findByClienteId(clienteId);
+
+        // 2. Criar carrinho se não existir
+        if (carrinho == null) {
+            Cliente cliente = clienteRepository.findById(clienteId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado: " + clienteId));
+            carrinho = new Carrinho();
+            carrinho.setCliente(cliente);
+            carrinho = carrinhoRepository.save(carrinho);
+        }
+
+        // 3. Adicionar o item
+        return adicionarItem(carrinho.getId(), dto);
+    }
+
 
     /**
      * Cria carrinho, se ainda não existir

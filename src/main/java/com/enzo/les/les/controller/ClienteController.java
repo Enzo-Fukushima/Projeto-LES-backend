@@ -3,6 +3,7 @@ package com.enzo.les.les.controller;
 import java.util.List;
 
 import com.enzo.les.les.dtos.*;
+import com.enzo.les.les.model.entities.Cliente;
 import com.enzo.les.les.service.ClienteService;
 import com.enzo.les.les.service.EnderecoService;
 import com.enzo.les.les.service.CartaoCreditoService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +65,30 @@ public class ClienteController {
     public ResponseEntity<ClienteDetalhadoDTO> createCliente(@Valid @RequestBody CreateClienteDTO dto) {
         return ResponseEntity.ok(clienteService.salvar(dto));
     }
+
+
+    @Operation(summary = "Criar um cliente", description = "Cria um cliente no sistema com os dados informados")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Falha ao criar cliente"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
+
+        Cliente cliente = clienteService.buscarPorEmail(dto.getEmail()).orElseThrow(()-> new EntityNotFoundException("Email ou senha incorretos"));
+
+        if (cliente == null) {
+            return ResponseEntity.status(404).body("Email ou senha incorretos");
+        }
+
+        if (!cliente.getSenha().equals(dto.getSenha())) {
+            return ResponseEntity.status(401).body("Email ou senha incorretos");
+        }
+
+        return ResponseEntity.ok(cliente.mapToDTODetalhado());
+    }
+
 
     @Operation(summary = "Atualizar cliente", description = "Edita os dados de um cliente existente")
     @ApiResponses({

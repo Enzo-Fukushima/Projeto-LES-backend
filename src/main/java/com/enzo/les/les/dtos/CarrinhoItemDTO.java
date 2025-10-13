@@ -15,7 +15,7 @@ public class CarrinhoItemDTO {
 
     private Long clienteId;
     @NotNull
-    private Long livroId;
+    private long livroId;
 
     @Min(1)
     private Integer quantidade;

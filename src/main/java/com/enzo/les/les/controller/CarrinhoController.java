@@ -28,9 +28,9 @@ public class CarrinhoController {
     })
     @GetMapping("cliente/{clienteId}")
     public ResponseEntity<CarrinhoDTO> getCarrinhoByCliente(@PathVariable Long clienteId) {
-    return carrinhoService.buscarCarrinhoPorCliente(clienteId)
-            .map(ResponseEntity::ok)                  // 200 OK com o DTO
-            .orElseGet(() -> ResponseEntity.notFound().build()); // 404 se não encontrado
+        return carrinhoService.buscarCarrinhoPorCliente(clienteId)
+                .map(ResponseEntity::ok)                  // 200 OK se existir
+                .orElseGet(() -> ResponseEntity.notFound().build()); // 404 se não existir
     }
 
     @PostMapping("/cliente/{clienteId}")
@@ -43,6 +43,14 @@ public class CarrinhoController {
         return ResponseEntity.ok(carrinhoService.adicionarItem(carrinhoId, dto));
     }
 
+    @PostMapping("/cliente/{clienteId}/itens")
+    public ResponseEntity<CarrinhoDTO> addItemByCliente(
+            @PathVariable Long clienteId,
+            @RequestBody @Valid CarrinhoItemDTO dto
+    ) {
+        return ResponseEntity.ok(carrinhoService.adicionarItemPorCliente(clienteId, dto));
+    }
+
     @Operation(summary = "Atualizar quantidade de item do carrinho")
     @PutMapping("/{carrinhoId}/itens")
     public ResponseEntity<CarrinhoDTO> updateItem(@PathVariable Long carrinhoId,@Valid @RequestBody CarrinhoUpdateItemDTO dto) {
@@ -53,5 +61,7 @@ public class CarrinhoController {
     public ResponseEntity<CarrinhoDTO> removeItem(@PathVariable Long carrinhoId, @PathVariable Long livroId) {
         return ResponseEntity.ok(carrinhoService.removerItem(carrinhoId, livroId));
     }
+
+
 
 }

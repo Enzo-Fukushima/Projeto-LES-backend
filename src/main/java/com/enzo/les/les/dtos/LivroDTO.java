@@ -19,8 +19,7 @@ public class LivroDTO {
     private Double preco;
     private String autor;
 
-    private Long grupoPrecificacaoId;
-    private String grupoPrecificacaoNome;
+    private long estoque;
 
     private Long editoraId;
     private String editoraNome;

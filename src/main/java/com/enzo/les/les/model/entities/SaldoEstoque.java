@@ -15,7 +15,6 @@ public class SaldoEstoque {
     private Long livroId;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "livro_id")
     private Livro livro;
 

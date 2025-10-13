@@ -25,7 +25,7 @@ public class LivroController {
         return livroService.listarTodos();
     }
     @Operation(summary = "livro por ID")
-    @GetMapping()
+    @GetMapping("/{id}")
     public LivroDTO GetLivroById(long id) {
         return livroService.getLivroById(id);
     }

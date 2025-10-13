@@ -1,6 +1,7 @@
 package com.enzo.les.les.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.enzo.les.les.dtos.*;
@@ -49,6 +50,10 @@ public class ClienteService {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id " + id));
         return cliente.mapToDTODetalhado();
+    }
+
+    public Optional<Cliente> buscarPorEmail(String email) {
+        return clienteRepository.findByEmail(email);
     }
 
     // READ - listar todos

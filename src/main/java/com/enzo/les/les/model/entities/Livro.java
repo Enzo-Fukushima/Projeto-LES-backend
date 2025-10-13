@@ -3,16 +3,7 @@ package com.enzo.les.les.model.entities;
 import java.util.Set;
 
 import com.enzo.les.les.dtos.LivroDTO;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -57,6 +48,9 @@ public class Livro {
     )
     private Set<Categoria> categorias;
 
+    @OneToOne(mappedBy = "livro")
+    private SaldoEstoque saldoEstoque;
+
 
     public LivroDTO mapToDTO(){
         return LivroDTO.builder()
@@ -65,8 +59,7 @@ public class Livro {
                 .titulo(this.titulo)
                 .preco(this.preco)
                 .autor(this.autor)
-                .grupoPrecificacaoId(this.grupoPrecificacao != null ? this.grupoPrecificacao.getId() : null)
-                .grupoPrecificacaoNome(this.grupoPrecificacao != null ? this.grupoPrecificacao.getNome() : null)
+                .estoque(this.saldoEstoque != null ? this.saldoEstoque.getQuantidade() : 0) // <- estoque
                 .editoraId(this.editora != null ? this.editora.getId() : null)
                 .editoraNome(this.editora != null ? this.editora.getNome() : null)
                 .categoriaIds(this.categorias != null
@@ -76,6 +69,5 @@ public class Livro {
                         ? this.categorias.stream().map(Categoria::getNome).collect(java.util.stream.Collectors.toSet())
                         : java.util.Collections.emptySet())
                 .build();
-        
     }
 }
