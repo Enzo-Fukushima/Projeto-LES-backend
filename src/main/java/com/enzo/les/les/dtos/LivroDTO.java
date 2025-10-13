@@ -1,11 +1,11 @@
 package com.enzo.les.les.dtos;
 
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -14,16 +14,18 @@ import java.util.Set;
 public class LivroDTO {
 
     private Long id;
-    private String codigo;
     private String titulo;
-    private Double preco;
     private String autor;
+    private String descricao;
+    private String editora;
+    private Double preco;
+    private String publicacao;
+    private Integer estoque;
+    private Double peso;
 
-    private long estoque;
-
-    private Long editoraId;
-    private String editoraNome;
-
+    // Agora apenas IDs e nomes de categorias
     private Set<Long> categoriaIds;
     private Set<String> categoriaNomes;
+
+    private String imagemUrl;
 }

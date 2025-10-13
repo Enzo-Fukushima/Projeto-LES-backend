@@ -1,9 +1,22 @@
 package com.enzo.les.les.model.entities;
 
+import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.enzo.les.les.dtos.LivroDTO;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,26 +34,34 @@ public class Livro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String codigo;
-
     @Column(nullable = false, length = 300)
     private String titulo;
 
-    @ManyToOne
-    @JoinColumn(name = "grupo_precificacao_id")
-    private GrupoPrecificacao grupoPrecificacao;
-
-    private Double preco;
-
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 150)
     private String autor;
 
-    @ManyToOne
-    @JoinColumn(name = "editora_id")
-    private Editora editora;
+    @Column(length = 1000)
+    private String descricao;
 
-    @ManyToMany
+    @Column(nullable = false, length = 150)
+    private String editora;
+
+    @Column(nullable = false)
+    private Double preco;
+
+    @Column(nullable = false)
+    private String publicacao; // formato "YYYY-MM-DD"
+
+    @Column(nullable = false)
+    private Integer estoque;
+
+    @Column
+    private Double peso;
+
+    @ManyToMany(
+        cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+        fetch = FetchType.LAZY
+    )
     @JoinTable(
         name = "livro_categoria",
         joinColumns = @JoinColumn(name = "livro_id"),
@@ -48,26 +69,26 @@ public class Livro {
     )
     private Set<Categoria> categorias;
 
-    @OneToOne(mappedBy = "livro")
-    private SaldoEstoque saldoEstoque;
+    @Column(name = "imagem_url", length = 500)
+    private String imagemUrl;
 
+    public LivroDTO mapToDTO() {
+        // Evita NullPointerException caso categorias seja nulo
+        Set<Long> categoriaIds = (categorias == null ? Collections.emptySet() :
+                categorias.stream().map(Categoria::getId).collect(Collectors.toSet()));
 
-    public LivroDTO mapToDTO(){
+        Set<String> categoriaNomes = (categorias == null ? Collections.emptySet() :
+                categorias.stream().map(Categoria::getNome).collect(Collectors.toSet()));
+
         return LivroDTO.builder()
                 .id(this.id)
-                .codigo(this.codigo)
                 .titulo(this.titulo)
-                .preco(this.preco)
                 .autor(this.autor)
-                .estoque(this.saldoEstoque != null ? this.saldoEstoque.getQuantidade() : 0) // <- estoque
-                .editoraId(this.editora != null ? this.editora.getId() : null)
-                .editoraNome(this.editora != null ? this.editora.getNome() : null)
-                .categoriaIds(this.categorias != null
-                        ? this.categorias.stream().map(Categoria::getId).collect(java.util.stream.Collectors.toSet())
-                        : java.util.Collections.emptySet())
-                .categoriaNomes(this.categorias != null
-                        ? this.categorias.stream().map(Categoria::getNome).collect(java.util.stream.Collectors.toSet())
-                        : java.util.Collections.emptySet())
+                .editora(this.editora)
+                .preco(this.preco)
+                .estoque(this.estoque != null ? this.estoque : 0)
+                .categoriaIds(categoriaIds)
+                .categoriaNomes(categoriaNomes)
                 .build();
     }
 }

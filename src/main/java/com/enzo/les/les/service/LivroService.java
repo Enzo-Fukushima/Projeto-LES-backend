@@ -1,33 +1,34 @@
 package com.enzo.les.les.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import com.enzo.les.les.dtos.LivroDTO;
-import com.enzo.les.les.exceptions.ResourceNotFoundException;
-import com.enzo.les.les.model.entities.Livro;
-import com.enzo.les.les.repository.LivroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.enzo.les.les.dtos.LivroDTO;
+import com.enzo.les.les.model.entities.Livro;
+import com.enzo.les.les.repository.LivroRepository;
 
 @Service
 public class LivroService {
 
     @Autowired
-    private final LivroRepository livroRepository;
+    private LivroRepository livroRepository;
 
-    public LivroService(LivroRepository livroRepository) {
-        this.livroRepository = livroRepository;
+    @Transactional(readOnly = true)
+    public List<LivroDTO> listarTodos() {
+        return livroRepository.findAll()
+            .stream()
+            .map(Livro::mapToDTO)
+            .collect(Collectors.toList());
     }
 
-    public List<LivroDTO> listarTodos(){
-        return livroRepository.findAll().stream().map(Livro::mapToDTO).toList();
+    @Transactional(readOnly = true)
+    public LivroDTO getLivroById(Long id) {
+        return livroRepository.findById(id)
+            .map(Livro::mapToDTO)
+            .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
     }
-
-    public LivroDTO getLivroById(long id){
-        Livro livro = livroRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cartão não encontrado: " + id));
-        return livro.mapToDTO();
-    }
-
-
-
 }
