@@ -1,6 +1,7 @@
 package com.enzo.les.les.dtos;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.enzo.les.les.enums.TipoTelefoneEnum;
@@ -56,10 +57,10 @@ public class ClienteDetalhadoDTO {
     private Integer ranking = 0;
 
     @Valid
-    private List<EnderecoDTO> enderecos;
+    private List<EnderecoDTO> enderecos = new ArrayList<>();
 
     @Valid
-    private List<CartaoCreditoDTO> cartoes;
+    private List<CartaoCreditoDTO> cartoes = new ArrayList<>();
 
     public Cliente mapToEntity() {
         Cliente cliente = new Cliente();
