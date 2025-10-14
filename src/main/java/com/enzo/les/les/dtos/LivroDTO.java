@@ -17,7 +17,7 @@ public class LivroDTO {
     private String titulo;
     private String autor;
     private String descricao;
-    private String editora;
+    private Long editoraId;
     private Double preco;
     private String publicacao;
     private Integer estoque;
