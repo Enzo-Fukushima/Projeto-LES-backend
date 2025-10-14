@@ -5,6 +5,8 @@ import com.enzo.les.les.dtos.CartaoCreditoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "cartoes_credito")
 @Data
@@ -26,6 +28,9 @@ public class CartaoCredito {
     private String codigoSeguranca;
 
     private BandeiraCartaoEnum bandeira;
+
+    @Column(name = "data_validade", nullable = false)
+    private LocalDate validade;
 
     // Relacionamento com Cliente (um cliente pode ter vários cartões)
     @ManyToOne
