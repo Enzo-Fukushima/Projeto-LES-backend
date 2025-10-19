@@ -3,6 +3,7 @@ package com.enzo.les.les.controller;
 import com.enzo.les.les.dtos.CheckoutRequestDTO;
 import com.enzo.les.les.dtos.CheckoutResponseDTO;
 import com.enzo.les.les.dtos.OrderDTO;
+import com.enzo.les.les.model.entities.Pedido;
 import com.enzo.les.les.service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -51,9 +53,19 @@ public class PedidoController {
     }
 
     @Operation(summary = "Buscar todos os pedidos do sistema")
-    @GetMapping("")
-    public ResponseEntity<List<OrderDTO>> getAllPedidos(@PathVariable Long id){
+    @GetMapping
+    public ResponseEntity<List<OrderDTO>> getAllPedidos(){
         List<OrderDTO> listDto = pedidoService.getAllPedidos();
         return ResponseEntity.ok(listDto);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderDTO> updateStatus(
+            @PathVariable("id") Long id,
+            @RequestBody Map<String, String> payload) {
+
+        String status = payload.get("status");
+        Pedido pedido = pedidoService.updateStatus(id, status);
+        return ResponseEntity.ok(pedido.mapToDTO());
     }
 }
