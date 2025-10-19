@@ -1,5 +1,4 @@
 package com.enzo.les.les.model.entities;
-
 import com.enzo.les.les.enums.TipoCupomEnum;
 import jakarta.persistence.*;
 import lombok.*;
