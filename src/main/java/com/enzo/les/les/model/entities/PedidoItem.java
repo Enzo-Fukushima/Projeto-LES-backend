@@ -1,5 +1,6 @@
 package com.enzo.les.les.model.entities;
 
+import com.enzo.les.les.dtos.OrderItemDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -41,4 +42,13 @@ public class PedidoItem {
     private Integer quantidade;
 
     private BigDecimal subtotal;
+
+    public OrderItemDTO mapToDto(){
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setId(this.getId());
+        dto.setSubtotal(this.getSubtotal());
+        dto.setPrecoUnitario(this.getPrecoUnitario());
+        dto.setQuantidade(this.getQuantidade());
+        return dto;
+    }
 }

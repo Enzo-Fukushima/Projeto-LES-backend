@@ -6,6 +6,7 @@ import com.enzo.les.les.exceptions.InsufficientStockException;
 import com.enzo.les.les.exceptions.ResourceNotFoundException;
 import com.enzo.les.les.model.entities.*;
 import com.enzo.les.les.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +88,18 @@ public class PedidoService {
         return montarCheckoutResponse(pedido, valorTotal, valorPago);
     }
 
+
+    public List<OrderDTO> getPedidosByClienteId(long id){
+        Cliente cliente =  clienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+        return cliente.getPedidos()
+                .stream()
+                .map(Pedido::mapToDTO)
+                .toList();
+    }
+
+    public List<OrderDTO> getAllPedidos(){
+      return pedidoRepository.findAll().stream().map(Pedido::mapToDTO).toList();
+    }
     /**
      * Consulta um pedido por ID - monta OrderDTO
      */

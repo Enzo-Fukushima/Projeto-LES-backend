@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/pedidos")
 public class PedidoController {
@@ -39,5 +41,19 @@ public class PedidoController {
     public ResponseEntity<OrderDTO> getPedido(@PathVariable Long id) {
         OrderDTO dto = pedidoService.consultarPedido(id);
         return ResponseEntity.ok(dto);
+    }
+
+    @Operation(summary = "Buscar pedidos de um cliente pelo id do cliente")
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<OrderDTO>> getPedidosByCliente(@PathVariable Long id){
+        List<OrderDTO> listDto = pedidoService.getPedidosByClienteId(id);
+        return ResponseEntity.ok(listDto);
+    }
+
+    @Operation(summary = "Buscar todos os pedidos do sistema")
+    @GetMapping("")
+    public ResponseEntity<List<OrderDTO>> getAllPedidos(@PathVariable Long id){
+        List<OrderDTO> listDto = pedidoService.getAllPedidos();
+        return ResponseEntity.ok(listDto);
     }
 }
