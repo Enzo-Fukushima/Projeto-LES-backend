@@ -53,6 +53,15 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CupomUso> cuponsUsados;
 
+    @Column(name = "codigo_rastreamento")
+    private String codigoRastreamento;
+
+    @Column(name = "data_envio")
+    private LocalDateTime dataEnvio;
+
+    @Column(name = "data_entrega")
+    private LocalDateTime dataEntrega;
+
     @PrePersist
     public void prePersist() {
         this.dataPedido = LocalDateTime.now();
@@ -67,6 +76,10 @@ public class Pedido {
         dto.setClienteId(this.getCliente().getId());
         dto.setStatus(this.getStatus());
         dto.setDataCriacao(this.getDataPedido());
+        dto.setCodigoRastreamento(this.getCodigoRastreamento());
+        dto.setDataEnvio(this.getDataEnvio());
+        dto.setDataEntrega(this.getDataEntrega());
+        dto.setClienteNome(this.getCliente().getNome());
 
         // Mapear itens
         List<OrderItemDTO> itens = this.getItens().stream().map(pi -> {

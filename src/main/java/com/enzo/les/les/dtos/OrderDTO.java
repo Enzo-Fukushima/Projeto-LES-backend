@@ -18,4 +18,9 @@ public class OrderDTO {
     private BigDecimal valorTotal;
     private String status; // ABERTO, FECHADO, CANCELADO, ...
     private LocalDateTime dataCriacao;
+    private String codigoRastreamento;
+    private LocalDateTime dataEnvio;
+    private LocalDateTime dataEntrega;
+    private LocalDateTime dataPedido; // era dataCriacao
+    private String clienteNome; // para exibir no front
 }
