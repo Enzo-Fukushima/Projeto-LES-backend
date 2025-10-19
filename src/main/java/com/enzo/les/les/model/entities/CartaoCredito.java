@@ -46,7 +46,7 @@ public class CartaoCredito {
         dto.setCodigoSeguranca(this.codigoSeguranca);
         dto.setBandeira(this.bandeira);
         dto.setClienteId(this.cliente != null ? this.cliente.getId() : null);
-        dto.setData_validade(this.validade);
+        dto.setValidade(this.validade);
         return dto;
     }
 

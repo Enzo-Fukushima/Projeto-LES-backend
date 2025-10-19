@@ -31,7 +31,7 @@ public class CartaoCreditoDTO {
     @NotNull(message = "Bandeira do cartão não pode ser vazia")
     private BandeiraCartaoEnum bandeira;
 
-    private LocalDate data_validade;
+    private LocalDate validade;
 
     @NotNull(message = "Cliente ID não pode ser vazio")
     private Long clienteId;
@@ -43,7 +43,7 @@ public class CartaoCreditoDTO {
         cartao.setNomeImpresso(this.nomeImpresso);
         cartao.setCodigoSeguranca(this.codigoSeguranca);
         cartao.setBandeira(this.bandeira);
-        cartao.setValidade(this.data_validade);
+        cartao.setValidade(this.validade);
         return cartao;
     }
 }
