@@ -2,7 +2,11 @@ package com.enzo.les.les.dtos;
 
 import com.enzo.les.les.enums.TipoCupomEnum;
 import com.enzo.les.les.model.entities.Cupom;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 @Data
 @NoArgsConstructor
@@ -14,6 +18,8 @@ public class CupomUseDTO {
     private String codigo;
     // valor aplicado (opcional - servidor pode calcular)
     private TipoCupomEnum tipoCupom;
+
+    private Double valor;
 
     public CupomUseDTO(Cupom cupom) {
         CupomUseDTO dto = new CupomUseDTO();

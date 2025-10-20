@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 public class CartaoCreditoDTO {
 
@@ -29,6 +31,8 @@ public class CartaoCreditoDTO {
     @NotNull(message = "Bandeira do cartão não pode ser vazia")
     private BandeiraCartaoEnum bandeira;
 
+    private LocalDate validade;
+
     @NotNull(message = "Cliente ID não pode ser vazio")
     private Long clienteId;
 
@@ -39,6 +43,7 @@ public class CartaoCreditoDTO {
         cartao.setNomeImpresso(this.nomeImpresso);
         cartao.setCodigoSeguranca(this.codigoSeguranca);
         cartao.setBandeira(this.bandeira);
+        cartao.setValidade(this.validade);
         return cartao;
     }
 }

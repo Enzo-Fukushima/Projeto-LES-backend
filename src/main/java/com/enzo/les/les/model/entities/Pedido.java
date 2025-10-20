@@ -1,8 +1,13 @@
 package com.enzo.les.les.model.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.enzo.les.les.dtos.EnderecoDTO;
+import com.enzo.les.les.dtos.OrderDTO;
+import com.enzo.les.les.dtos.OrderItemDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +53,15 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CupomUso> cuponsUsados;
 
+    @Column(name = "codigo_rastreamento")
+    private String codigoRastreamento;
+
+    @Column(name = "data_envio")
+    private LocalDateTime dataEnvio;
+
+    @Column(name = "data_entrega")
+    private LocalDateTime dataEntrega;
+
     @PrePersist
     public void prePersist() {
         this.dataPedido = LocalDateTime.now();
@@ -55,5 +69,62 @@ public class Pedido {
             this.status = "ABERTO";
         }
     }
+
+    public OrderDTO mapToDTO() {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(this.getId());
+        dto.setClienteId(this.getCliente().getId());
+        dto.setStatus(this.getStatus());
+        dto.setDataCriacao(this.getDataPedido());
+        dto.setCodigoRastreamento(this.getCodigoRastreamento());
+        dto.setDataEnvio(this.getDataEnvio());
+        dto.setDataEntrega(this.getDataEntrega());
+        dto.setClienteNome(this.getCliente().getNome());
+
+        // Mapear itens
+        List<OrderItemDTO> itens = this.getItens().stream().map(pi -> {
+            OrderItemDTO i = new OrderItemDTO();
+            i.setId(pi.getId());
+            i.setLivroId(pi.getLivro().getId());
+            i.setTitulo(pi.getLivro().getTitulo());
+            i.setQuantidade(pi.getQuantidade());
+            i.setPrecoUnitario(pi.getPrecoUnitario());
+            i.setSubtotal(pi.getSubtotal());
+            return i;
+        }).collect(Collectors.toList());
+        dto.setItens(itens);
+
+        // Calcular valorTotal somando subtotais dos itens
+        BigDecimal valorTotal = itens.stream()
+                .map(OrderItemDTO::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        dto.setValorTotal(valorTotal);
+
+        // Mapear endereço
+        if (this.getEnderecoEntrega() != null) {
+            EnderecoDTO enderecoDTO = new EnderecoDTO();
+            enderecoDTO.setId(this.getEnderecoEntrega().getId());
+            enderecoDTO.setTipoEndereco(this.getEnderecoEntrega().getTipoEndereco());
+            enderecoDTO.setTipoLogradouro(this.getEnderecoEntrega().getTipoLogradouro());
+            enderecoDTO.setNumero(this.getEnderecoEntrega().getNumero());
+            enderecoDTO.setCidade(this.getEnderecoEntrega().getCidade());
+            enderecoDTO.setCep(this.getEnderecoEntrega().getCep());
+            dto.setEnderecoEntrega(enderecoDTO);
+        }
+        return dto;
+    }
+
+
+    private EnderecoDTO getEnderecoDTO(Pedido pedido) {
+        EnderecoDTO enderecoDTO = new EnderecoDTO();
+        enderecoDTO.setId(pedido.getEnderecoEntrega().getId());
+        enderecoDTO.setTipoEndereco(this.enderecoEntrega.getTipoEndereco());
+        enderecoDTO.setTipoLogradouro(this.enderecoEntrega.getTipoLogradouro());
+        enderecoDTO.setNumero(pedido.getEnderecoEntrega().getNumero());
+        enderecoDTO.setCidade(pedido.getEnderecoEntrega().getCidade());
+        enderecoDTO.setCep(pedido.getEnderecoEntrega().getCep());
+        return enderecoDTO;
+    }
+
 
 }
