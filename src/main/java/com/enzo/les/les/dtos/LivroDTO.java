@@ -22,6 +22,7 @@ public class LivroDTO {
     private String publicacao;
     private Integer estoque;
     private Double peso;
+    private String imagem_url;
 
     // Agora apenas IDs e nomes de categorias
     private Set<Long> categoriaIds;

@@ -6,8 +6,26 @@ import java.util.stream.Collectors;
 
 import com.enzo.les.les.dtos.LivroDTO;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "livros")
@@ -88,6 +106,9 @@ public class Livro {
                 .autor(this.autor)
                 .editoraId(this.editora != null ? this.editora.getId() : null)
                 .preco(this.preco)
+                .descricao(this.descricao)
+                .imagem_url(this.imagemUrl)
+                .publicacao(this.publicacao)
                 .estoque(this.getEstoque())
                 .categoriaIds(categoriaIds)
                 .categoriaNomes(categoriaNomes)

@@ -17,6 +17,7 @@ public class CarrinhoDTO {
     private Long id;
     @NotNull
     private Long clienteId;
+    private LivroDTO livro;
     private List<CarrinhoItemDTO> itens;
     private BigDecimal desconto;
     private String cupomCodigo;
