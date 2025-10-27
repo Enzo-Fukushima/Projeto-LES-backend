@@ -34,12 +34,46 @@ public class CupomService {
         return cupomRepository.findByCodigo(codigo);
     }
 
-    // Validar cupom
+    // Validar cupom (method interno para verificar regras de negócio)
     public static boolean validarCupom(Cupom cupom, BigDecimal valorCompra) {
         if (!cupom.isAtivo()) return false;
-        if (cupom.getDataValidade()!= null && cupom.getDataValidade().isBefore(LocalDate.now())) return false;
+        if (cupom.getDataValidade() != null && cupom.getDataValidade().isBefore(LocalDate.now())) return false;
         if (cupom.getValorMinimo() != null && valorCompra.compareTo(BigDecimal.valueOf(cupom.getValorMinimo())) < 0) return false;
         return true;
+    }
+
+    //Validar cupom e retornar DTO para o frontend
+    public CupomUseDTO validarCupom(String codigo) {
+        Cupom cupom = cupomRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new ResourceNotFoundException("Cupom não encontrado: " + codigo));
+
+        // Verificar se está ativo
+        if (!cupom.isAtivo()) {
+            throw new BusinessException("Cupom inativo ou expirado: " + codigo);
+        }
+
+        // Verificar data de validade
+        if (cupom.getDataValidade() != null && cupom.getDataValidade().isBefore(LocalDate.now())) {
+            throw new BusinessException("Cupom expirado: " + codigo);
+        }
+
+        // Converter para DTO
+        CupomUseDTO dto = new CupomUseDTO();
+        dto.setId(cupom.getId());
+        dto.setCupomId(cupom.getId());
+        dto.setCodigo(cupom.getCodigo());
+        dto.setTipo(cupom.getTipoCupom());
+        dto.setValor(cupom.getValor());
+        dto.setPercentual(cupom.isPercentual());
+        dto.setValorMinimo(cupom.getValorMinimo());
+        dto.setAtivo(cupom.isAtivo());
+        dto.setSingleUse(cupom.isSingleUse());
+
+        if (cupom.getDataValidade() != null) {
+            dto.setDataValidade(cupom.getDataValidade().toString());
+        }
+
+        return dto;
     }
 
     // Aplicar cupom em um carrinho
@@ -79,15 +113,4 @@ public class CupomService {
         cupom.setAtivo(false);
         cupomRepository.save(cupom);
     }
-
-    public CupomUseDTO validarCupom(String codigo) {
-        Cupom cupom = cupomRepository.findByCodigo(codigo)
-                .orElseThrow(() -> new ResourceNotFoundException("Cupom não encontrado"));
-
-        boolean valido = validarCupom(cupom, BigDecimal.ZERO); // ou passe o valor da compra, se aplicável
-        if (!valido) throw new BusinessException("Cupom inválido ou expirado");
-
-        return new CupomUseDTO(cupom);
-    }
 }
-
