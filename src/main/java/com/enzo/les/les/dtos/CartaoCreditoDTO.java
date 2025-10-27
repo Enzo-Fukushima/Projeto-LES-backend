@@ -10,6 +10,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 
 @Data
 public class CartaoCreditoDTO {
@@ -45,5 +47,11 @@ public class CartaoCreditoDTO {
         cartao.setBandeira(this.bandeira);
         cartao.setValidade(this.validade);
         return cartao;
+    }
+
+    public void setValidade(String validade) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+        YearMonth ym = YearMonth.parse(validade, formatter);
+        this.validade = ym.atEndOfMonth(); // define como o último dia do mês
     }
 }

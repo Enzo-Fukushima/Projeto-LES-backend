@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "cartoes_credito")
@@ -46,7 +47,7 @@ public class CartaoCredito {
         dto.setCodigoSeguranca(this.codigoSeguranca);
         dto.setBandeira(this.bandeira);
         dto.setClienteId(this.cliente != null ? this.cliente.getId() : null);
-        dto.setValidade(this.validade);
+        dto.setValidade(this.validade.format(DateTimeFormatter.ofPattern("MM/yy")));
         return dto;
     }
 
