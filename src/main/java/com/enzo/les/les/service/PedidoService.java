@@ -40,6 +40,7 @@ public class PedidoService {
     public CheckoutResponseDTO criarPedidoAPartirDoCarrinho(CheckoutRequestDTO dto) {
         Carrinho carrinho = buscarCarrinhoValido(dto.getCarrinhoId());
         BigDecimal valorTotal = calcularValorTotal(carrinho);
+        validarValorMinimo(valorTotal);
         BigDecimal descontoTotal = calcularDescontos(dto, valorTotal);
         BigDecimal valorAPagar = valorTotal.subtract(descontoTotal);
         BigDecimal valorPago = validarPagamentos(dto, valorAPagar);
@@ -321,5 +322,13 @@ public class PedidoService {
 
         return pedidoRepository.save(pedido);
     }
+
+    private void validarValorMinimo(BigDecimal valorTotal) {
+        BigDecimal valorMinimo = BigDecimal.valueOf(10);
+        if (valorTotal.compareTo(valorMinimo) < 0) {
+            throw new BusinessException("O valor mínimo para compra é R$10,00");
+        }
+    }
+
 
 }
