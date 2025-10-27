@@ -1,6 +1,7 @@
 package com.enzo.les.les.model.entities;
 
 import com.enzo.les.les.dtos.CarrinhoItemDTO;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
