@@ -1,45 +1,54 @@
 package com.enzo.les.les.model.entities;
+
 import com.enzo.les.les.enums.TipoCupomEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "cupons")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Cupom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String codigo;
 
-    @Column(nullable = false)
-    private boolean ativo = true;
-
-    @Column(name = "data_validade")
-    private LocalDate dataValidade;
-
-    @Column(name = "valor_minimo")
-    private Double valorMinimo;
+    @Column(name = "tipo_cupom", length = 50)
+    private TipoCupomEnum tipoCupom; // TROCA, PROMOCIONAL, PRIMEIRA_COMPRA
 
     @Column(nullable = false)
     private Double valor;
 
     @Column(nullable = false)
-    private boolean percentual; // true = %, false = valor fixo
+    private boolean percentual;
 
-    private TipoCupomEnum tipoCupom;
+    @Column(name = "valor_minimo")
+    private Double valorMinimo;
 
-    @OneToMany(mappedBy = "cupom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CupomUso> usos;
+    @Column(nullable = false)
+    private boolean ativo = true;
 
-    private boolean singleUse;
+    @Column(name = "single_use", nullable = false)
+    private boolean singleUse = false;
 
+    @Column(name = "data_validade")
+    private LocalDate dataValidade;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
+    // NOVO: Relacionamento com Troca
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "troca_id")
+    private Troca troca;
 }

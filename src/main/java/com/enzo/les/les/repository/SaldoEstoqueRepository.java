@@ -17,4 +17,5 @@ public interface SaldoEstoqueRepository extends JpaRepository<SaldoEstoque, Long
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select s from SaldoEstoque s join fetch s.livro l where l.id = :livroId")
     Optional<SaldoEstoque> findByLivroIdForUpdate(@Param("livroId") Long livroId);
+    Optional<SaldoEstoque> findByLivroId(Long livroId);
 }
