@@ -71,26 +71,45 @@ public class PedidoService {
                 .toList();
     }
 
+    @Transactional
     public OrderDTO consultarPedido(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+
+        // Força carregamento lazy dos itens
+        pedido.getItens().size();
 
         OrderDTO dto = new OrderDTO();
         dto.setId(pedido.getId());
         dto.setStatus(pedido.getStatus());
         dto.setClienteId(pedido.getCliente().getId());
+        dto.setDataPedido(pedido.getDataPedido());
+        dto.setDataEnvio(pedido.getDataEnvio());
+        dto.setDataEntrega(pedido.getDataEntrega());
+        dto.setCodigoRastreamento(pedido.getCodigoRastreamento());
+
+        // Calcular valores
+        BigDecimal valorTotal = BigDecimal.ZERO;
 
         List<OrderItemDTO> itens = pedido.getItens().stream().map(pi -> {
-            OrderItemDTO orderIDto = new OrderItemDTO();
-            orderIDto.setLivroId(pi.getLivro().getId());
-            orderIDto.setTitulo(pi.getLivro().getTitulo());
-            orderIDto.setQuantidade(pi.getQuantidade());
-            orderIDto.setPrecoUnitario(pi.getPrecoUnitario());
-            orderIDto.setSubtotal(pi.getSubtotal());
-            return orderIDto;
+            OrderItemDTO itemDto = new OrderItemDTO();
+            itemDto.setId(pi.getId()); // ← IMPORTANTE: adicionar o ID do item
+            itemDto.setLivroId(pi.getLivro().getId());
+            itemDto.setTitulo(pi.getLivro().getTitulo());
+            itemDto.setQuantidade(pi.getQuantidade());
+            itemDto.setPrecoUnitario(pi.getPrecoUnitario());
+            itemDto.setSubtotal(pi.getSubtotal());
+            return itemDto;
         }).collect(Collectors.toList());
 
         dto.setItens(itens);
+
+        // Calcular valor total
+        valorTotal = itens.stream()
+                .map(OrderItemDTO::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        dto.setValorTotal(valorTotal);
+
         return dto;
     }
 
