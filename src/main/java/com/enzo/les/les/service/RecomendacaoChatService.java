@@ -1,6 +1,10 @@
 package com.enzo.les.les.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -83,20 +87,28 @@ public class RecomendacaoChatService {
         String perfilCliente = "Cliente ID " + clienteId;
         List<String> catalogo = livroRepository.findTop20MaisVendidos()
                 .stream()
-                .map(l -> "ID:" + l.getId() + " | " + l.getTitulo())
+                // ⭐️ CORREÇÃO: INCLUINDO O PREÇO NO FORMATO DO CATÁLOGO
+                .map(l -> "ID:" + l.getId() + " | Título: " + l.getTitulo() + " | Preço: R$" + String.format("%.2f", l.getPreco()))
                 .collect(Collectors.toList());
 
         return String.join("\n", catalogo);
     }
 
     private String construirPromptSistema(String contexto) {
-        return String.format("""
-                Você é o Chat Concierge do %s.
-                Regras:
-                - Sempre responda em Português.
-                - Quando citar um livro, use [BOOK:ID].
-                Catálogo:
-                %s
-                """, NOME_E_COMMERCE, contexto);
-    }
+    // Definimos o NOME_E_COMMERCE como um placeholder, que será inserido no String.format
+   
+    return String.format("""
+        Você é o Chat Concierge do %s. Sua ÚNICA função é recomendar e falar sobre livros.
+
+        REGRAS DE COMPORTAMENTO CRÍTICAS:
+        1. Responda sempre em Português e com uma linguagem amigável, como um atendente de livraria.
+        2. **FOCO EXCLUSIVO**: Mantenha o foco estrito em livros e recomendações. Se o usuário perguntar sobre tópicos não relacionados (ex: "gosto de praia", notícias, esportes), ignore o tópico e traga a conversa de volta para livros, respondendo com uma sugestão ou pergunta relacionada a leitura.
+        3. **USO DO PREÇO**: O catálogo que você recebeu inclui o Título, ID, e **Preço**. Se o usuário perguntar sobre "livro barato" ou "preços", **VOCÊ DEVE** utilizar a informação de preço fornecida para justificar sua recomendação. **NUNCA diga que não tem acesso ao preço.**
+        4. os livros recomendados devem ser apenas nome e não devem conter o ID
+        5. Use os preços vindos do banco para fazer a recomendação
+
+        CONTEXTO COMPLETO E CATÁLOGO:
+        %s
+        """, NOME_E_COMMERCE, contexto);
+}
 }
