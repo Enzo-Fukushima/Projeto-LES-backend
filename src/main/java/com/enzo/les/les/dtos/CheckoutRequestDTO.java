@@ -35,4 +35,7 @@ public class CheckoutRequestDTO {
 
     // Observações, frete, etc.
     private String observacoes;
+
+    private Long cupomTrocaComSaldo;
+    private BigDecimal saldoCupomTroca;
 }

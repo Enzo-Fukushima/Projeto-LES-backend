@@ -13,4 +13,6 @@ public class CheckoutResponseDTO {
     private BigDecimal valorTotal;
     private String mensagem;
     private BigDecimal valorPago;
+    private String novoCupomGerado;
+    private BigDecimal valorNovoCupom;
 }
