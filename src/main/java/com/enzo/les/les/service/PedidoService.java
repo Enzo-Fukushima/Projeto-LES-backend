@@ -1,6 +1,7 @@
 package com.enzo.les.les.service;
 
 import com.enzo.les.les.dtos.*;
+import com.enzo.les.les.enums.TipoCupomEnum;
 import com.enzo.les.les.exceptions.BusinessException;
 import com.enzo.les.les.exceptions.InsufficientStockException;
 import com.enzo.les.les.exceptions.ResourceNotFoundException;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,9 +53,28 @@ public class PedidoService {
         processarItensPedido(carrinho, pedido);
         processarPagamentos(dto, pedido);
         registrarUsoDeCupons(dto, pedido);
+
+        // Processar saldo de cupom de troca se houver
+        Cupom novoCupomSaldo = null;
+        if (dto.getCupomTrocaComSaldo() != null && dto.getSaldoCupomTroca() != null) {
+            novoCupomSaldo = gerarCupomSaldoTroca(
+                    dto.getCupomTrocaComSaldo(),
+                    dto.getSaldoCupomTroca(),
+                    carrinho.getCliente()
+            );
+        }
+
         limparCarrinho(carrinho);
 
-        return montarCheckoutResponse(pedido, valorTotal, valorPago);
+        CheckoutResponseDTO response = montarCheckoutResponse(pedido, valorTotal, valorPago);
+
+        // Informar sobre novo cupom gerado
+        if (novoCupomSaldo != null) {
+            response.setNovoCupomGerado(novoCupomSaldo.getCodigo());
+            response.setValorNovoCupom(BigDecimal.valueOf(novoCupomSaldo.getValor()));
+        }
+
+        return response;
     }
 
     public List<OrderDTO> getPedidosByClienteId(long id) {
@@ -88,12 +109,9 @@ public class PedidoService {
         dto.setDataEntrega(pedido.getDataEntrega());
         dto.setCodigoRastreamento(pedido.getCodigoRastreamento());
 
-        // Calcular valores
-        BigDecimal valorTotal = BigDecimal.ZERO;
-
         List<OrderItemDTO> itens = pedido.getItens().stream().map(pi -> {
             OrderItemDTO itemDto = new OrderItemDTO();
-            itemDto.setId(pi.getId()); // ← IMPORTANTE: adicionar o ID do item
+            itemDto.setId(pi.getId());
             itemDto.setLivroId(pi.getLivro().getId());
             itemDto.setTitulo(pi.getLivro().getTitulo());
             itemDto.setQuantidade(pi.getQuantidade());
@@ -105,7 +123,7 @@ public class PedidoService {
         dto.setItens(itens);
 
         // Calcular valor total
-        valorTotal = itens.stream()
+        BigDecimal valorTotal = itens.stream()
                 .map(OrderItemDTO::getSubtotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         dto.setValorTotal(valorTotal);
@@ -129,19 +147,42 @@ public class PedidoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    /**
+     * Calcula descontos e identifica cupons de troca com saldo restante
+     * REGRA: Apenas cupons de TROCA podem ser combinados. Outros tipos são exclusivos.
+     */
     private BigDecimal calcularDescontos(CheckoutRequestDTO dto, BigDecimal valorTotal) {
         BigDecimal descontoTotal = BigDecimal.ZERO;
 
+        // Validar regra: apenas cupons de TROCA podem ser múltiplos
+        validarCombinacaoDeCupons(dto);
+
         if (dto.getCupons() != null) {
             for (CupomUseDTO cu : dto.getCupons()) {
-                Cupom cupom = cupomRepository.findById(cu.getCupomId())
-                        .orElseThrow(() -> new BusinessException("Cupom não encontrado: " + cu.getCupomId()));
+                // Buscar cupom por ID ou por código
+                Cupom cupom = buscarCupom(cu);
 
                 if (!CupomService.validarCupom(cupom, valorTotal)) {
                     throw new BusinessException("Cupom inválido: " + cupom.getCodigo());
                 }
 
-                descontoTotal = descontoTotal.add(calcularDescontoCupom(cupom, valorTotal));
+                BigDecimal descontoCupom = calcularDescontoCupom(cupom, valorTotal);
+
+                // Se for cupom de TROCA e o desconto for maior que o valor restante
+                if (cupom.getTipoCupom() == TipoCupomEnum.TROCA &&
+                        descontoCupom.compareTo(valorTotal.subtract(descontoTotal)) > 0) {
+
+                    BigDecimal valorUtilizado = valorTotal.subtract(descontoTotal);
+                    BigDecimal saldoRestante = descontoCupom.subtract(valorUtilizado);
+
+                    // Marcar para gerar novo cupom depois
+                    dto.setCupomTrocaComSaldo(cupom.getId());
+                    dto.setSaldoCupomTroca(saldoRestante);
+
+                    descontoTotal = descontoTotal.add(valorUtilizado);
+                } else {
+                    descontoTotal = descontoTotal.add(descontoCupom);
+                }
             }
         }
 
@@ -153,10 +194,93 @@ public class PedidoService {
                 throw new BusinessException("Cupom promocional inválido ou não aplicável");
             }
 
-            descontoTotal = descontoTotal.add(calcularDescontoCupom(promo, valorTotal));
+            BigDecimal descontoCupom = calcularDescontoCupom(promo, valorTotal);
+
+            // Se for cupom de TROCA e o desconto for maior que o valor restante
+            if (promo.getTipoCupom() == TipoCupomEnum.TROCA &&
+                    descontoCupom.compareTo(valorTotal.subtract(descontoTotal)) > 0) {
+
+                BigDecimal valorUtilizado = valorTotal.subtract(descontoTotal);
+                BigDecimal saldoRestante = descontoCupom.subtract(valorUtilizado);
+
+                dto.setCupomTrocaComSaldo(promo.getId());
+                dto.setSaldoCupomTroca(saldoRestante);
+
+                descontoTotal = descontoTotal.add(valorUtilizado);
+            } else {
+                descontoTotal = descontoTotal.add(descontoCupom);
+            }
         }
 
         return descontoTotal;
+    }
+
+    /**
+     * Valida se a combinação de cupons é permitida.
+     * REGRA: Apenas cupons de TROCA podem ser combinados entre si.
+     * Cupons promocionais, primeira compra, etc. são exclusivos.
+     */
+    private void validarCombinacaoDeCupons(CheckoutRequestDTO dto) {
+        int totalCupons = 0;
+        int cuponsNaoTroca = 0;
+
+        // Contar cupons na lista
+        if (dto.getCupons() != null && !dto.getCupons().isEmpty()) {
+            totalCupons += dto.getCupons().size();
+
+            for (CupomUseDTO cu : dto.getCupons()) {
+                Cupom cupom = buscarCupom(cu);
+
+                if (cupom.getTipoCupom() != TipoCupomEnum.TROCA) {
+                    cuponsNaoTroca++;
+                }
+            }
+        }
+
+        // Contar cupom promocional
+        if (dto.getCupomPromocionalCodigo() != null && !dto.getCupomPromocionalCodigo().isBlank()) {
+            totalCupons++;
+
+            Cupom promo = cupomRepository.findByCodigo(dto.getCupomPromocionalCodigo())
+                    .orElseThrow(() -> new BusinessException("Cupom promocional não encontrado"));
+
+            if (promo.getTipoCupom() != TipoCupomEnum.TROCA) {
+                cuponsNaoTroca++;
+            }
+        }
+
+        // Validar regras
+        if (totalCupons > 1) {
+            // Se tem mais de um cupom, TODOS devem ser de troca
+            if (cuponsNaoTroca > 0) {
+                throw new BusinessException(
+                        "Não é possível combinar cupons. Apenas cupons de TROCA podem ser utilizados juntos. " +
+                                "Cupons promocionais, de primeira compra ou outros tipos são exclusivos."
+                );
+            }
+        }
+
+        // Validar se tem mais de um cupom não-troca (não pode)
+        if (cuponsNaoTroca > 1) {
+            throw new BusinessException(
+                    "Não é possível utilizar mais de um cupom promocional por compra."
+            );
+        }
+    }
+
+    /**
+     * Busca cupom por ID ou código
+     */
+    private Cupom buscarCupom(CupomUseDTO cu) {
+        if (cu.getCupomId() != null) {
+            return cupomRepository.findById(cu.getCupomId())
+                    .orElseThrow(() -> new BusinessException("Cupom não encontrado com ID: " + cu.getCupomId()));
+        } else if (cu.getCodigo() != null && !cu.getCodigo().isBlank()) {
+            return cupomRepository.findByCodigo(cu.getCodigo())
+                    .orElseThrow(() -> new BusinessException("Cupom não encontrado com código: " + cu.getCodigo()));
+        } else {
+            throw new BusinessException("Cupom sem ID ou código informado");
+        }
     }
 
     private BigDecimal calcularDescontoCupom(Cupom cupom, BigDecimal valorTotal) {
@@ -164,6 +288,34 @@ public class PedidoService {
                 ? valorTotal.multiply(BigDecimal.valueOf(cupom.getValor())
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP))
                 : BigDecimal.valueOf(cupom.getValor());
+    }
+
+    /**
+     * Gera novo cupom com saldo restante de cupom de troca
+     * IMPORTANTE: O cupom de saldo NÃO é vinculado à troca original
+     * para evitar violação da constraint única em troca_id
+     */
+    private Cupom gerarCupomSaldoTroca(Long cupomOriginalId, BigDecimal saldoRestante, Cliente cliente) {
+        Cupom cupomOriginal = cupomRepository.findById(cupomOriginalId)
+                .orElseThrow(() -> new BusinessException("Cupom original não encontrado"));
+
+        Cupom novoCupom = new Cupom();
+        novoCupom.setCodigo("SALDO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+        novoCupom.setTipoCupom(TipoCupomEnum.TROCA);
+        novoCupom.setValor(saldoRestante.doubleValue());
+        novoCupom.setPercentual(false);
+        novoCupom.setAtivo(true);
+        novoCupom.setSingleUse(true);
+        novoCupom.setValorMinimo(null);
+
+        // Manter a mesma data de validade do cupom original
+        novoCupom.setDataValidade(cupomOriginal.getDataValidade());
+        novoCupom.setCliente(cliente);
+
+        // NÃO vincular à troca original (evita constraint violation)
+        novoCupom.setTroca(null);
+
+        return cupomRepository.save(novoCupom);
     }
 
     private BigDecimal validarPagamentos(CheckoutRequestDTO dto, BigDecimal valorAPagar) {
@@ -274,8 +426,7 @@ public class PedidoService {
 
         if (dto.getCupons() != null) {
             for (CupomUseDTO cu : dto.getCupons()) {
-                Cupom cupom = cupomRepository.findById(cu.getCupomId())
-                        .orElseThrow(() -> new BusinessException("Cupom não encontrado: " + cu.getCupomId()));
+                Cupom cupom = buscarCupom(cu);
 
                 if (cupomUsoRepository.existsByCupomIdAndClienteId(cupom.getId(), cliente.getId())) {
                     throw new BusinessException("Cupom já utilizado por este cliente: " + cupom.getCodigo());
@@ -348,6 +499,4 @@ public class PedidoService {
             throw new BusinessException("O valor mínimo para compra é R$10,00");
         }
     }
-
-
 }
