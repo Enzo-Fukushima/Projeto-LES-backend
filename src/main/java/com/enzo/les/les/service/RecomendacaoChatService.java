@@ -43,11 +43,11 @@ public class RecomendacaoChatService {
         historico.add(new ChatMessageDTO("system", construirPromptSistema(construirContextoDoCliente(request.getClienteId()))));
         historico.addAll(request.getHistorico());
 
-        // Mapeia para GeminiRequest
+      
         GeminiHttpClient.ChatRequestDTO apiRequest =
                 GeminiHttpClient.ChatRequestDTO.fromLocalMessages(historico);
 
-        // CHAMADA SINCRONA
+      
         GeminiHttpClient.ChatResponseDTO apiResponse =
                 chatClient.generateContent(apiRequest);
 
@@ -87,7 +87,6 @@ public class RecomendacaoChatService {
         String perfilCliente = "Cliente ID " + clienteId;
         List<String> catalogo = livroRepository.findTop20MaisVendidos()
                 .stream()
-                // ⭐️ CORREÇÃO: INCLUINDO O PREÇO NO FORMATO DO CATÁLOGO
                 .map(l -> "ID:" + l.getId() + " | Título: " + l.getTitulo() + " | Preço: R$" + String.format("%.2f", l.getPreco()))
                 .collect(Collectors.toList());
 
@@ -95,14 +94,13 @@ public class RecomendacaoChatService {
     }
 
     private String construirPromptSistema(String contexto) {
-    // Definimos o NOME_E_COMMERCE como um placeholder, que será inserido no String.format
    
     return String.format("""
         Você é o Chat Concierge do %s. Sua ÚNICA função é recomendar e falar sobre livros.
 
         REGRAS DE COMPORTAMENTO CRÍTICAS:
         1. Responda sempre em Português e com uma linguagem amigável, como um atendente de livraria.
-        2. **FOCO EXCLUSIVO**: Mantenha o foco estrito em livros e recomendações. Se o usuário perguntar sobre tópicos não relacionados (ex: "gosto de praia", notícias, esportes), ignore o tópico e traga a conversa de volta para livros, respondendo com uma sugestão ou pergunta relacionada a leitura.
+        2. **FOCO EXCLUSIVO**: Mantenha o foco estrito em livros e recomendações. Se o usuário perguntar sobre tópicos não relacionados (ex: "gosto de praia", notícias, esportes) ou perguntar coisas que não te relação com a livraria, diga educadamente que não pode continuar no tópico e sugira que ele mantenha no tópico de livros.
         3. **USO DO PREÇO**: O catálogo que você recebeu inclui o Título, ID, e **Preço**. Se o usuário perguntar sobre "livro barato" ou "preços", **VOCÊ DEVE** utilizar a informação de preço fornecida para justificar sua recomendação. **NUNCA diga que não tem acesso ao preço.**
         4. os livros recomendados devem ser apenas nome e não devem conter o ID
         5. Use os preços vindos do banco para fazer a recomendação
